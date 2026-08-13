@@ -1,0 +1,430 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="referrer" content="no-referrer">
+<title>JobHub 團隊看板 2026-08-12</title>
+<style>
+:root{
+  --page:#f9f9f7; --card:#fcfcfb; --tx:#0b0b0b; --tx2:#52514e; --tx3:#898781;
+  --grid:#e1e0d9; --bd:rgba(11,11,11,.10);
+  --blue:#2a78d6; --red:#d03b3b; --green:#006300; --amber:#8a6100;
+  --box:#e8eef7; --boxbd:#c3d5ee;
+  --today:rgba(42,120,214,.06);
+  --blueFill:rgba(42,120,214,.13); --blueBd:rgba(42,120,214,.45);
+  --redFill:rgba(208,59,59,.12); --redBd:rgba(208,59,59,.55);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --page:#0d0d0d; --card:#1a1a19; --tx:#fff; --tx2:#c3c2b7; --tx3:#8e8d84;
+    --grid:#2c2c2a; --bd:rgba(255,255,255,.13);
+    --blue:#3987e5; --red:#e06b6b; --green:#0ca30c; --amber:#fab219;
+    --box:#1c2c42; --boxbd:#2f4a70;
+    --today:rgba(57,135,229,.10);
+    --blueFill:rgba(57,135,229,.18); --blueBd:rgba(57,135,229,.55);
+    --redFill:rgba(224,107,107,.14); --redBd:rgba(224,107,107,.6);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--tx);
+  font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif;
+  font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1160px;margin:0 auto;padding:28px 20px 64px}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:23px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:15px;margin:0 0 12px;letter-spacing:.02em;color:var(--tx2);font-weight:600}
+h3{font-size:13.5px;margin:16px 0 7px;font-weight:600}
+.sub{color:var(--tx2);font-size:13px;margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:19px 20px;margin-bottom:16px}
+.hair{height:1px;background:var(--grid);border:0;margin:13px 0}
+.mono{font-variant-numeric:tabular-nums}
+.big{font-size:26px;font-weight:650;color:var(--blue);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.muted{color:var(--tx2)}
+.faint{color:var(--tx3);font-size:12px}
+
+/* alerts: icon + text, never colour alone */
+.alert{border-radius:12px;padding:14px 16px;margin-bottom:14px;border:1px solid;display:flex;gap:11px;align-items:flex-start;font-size:13.5px}
+.alert .ic{flex:0 0 auto;font-size:16px;line-height:1.35}
+.alert.red{border-color:var(--red);background:transparent}
+.alert.red .ttl{color:var(--red);font-weight:650}
+.alert.amber{border-color:var(--amber);background:transparent}
+.alert.amber .ttl{color:var(--amber);font-weight:650}
+.alert.info{border-color:var(--boxbd);background:var(--box)}
+.alert.info .ttl{font-weight:650}
+
+/* A. goal pills */
+.pills{display:flex;flex-wrap:wrap;gap:9px}
+.pill{border:1px solid var(--bd);border-radius:12px;padding:11px 14px;min-width:186px;flex:1 1 186px;background:var(--card)}
+.pill .nm{font-weight:650;font-size:13.5px;margin-bottom:3px}
+.pill .num{font-size:19px;font-weight:650;color:var(--blue);font-variant-numeric:tabular-nums}
+.pill .meta{font-size:12px;color:var(--tx2)}
+.pill .warn{font-size:12px;color:var(--amber);margin-top:4px}
+.basis{font-size:12px;color:var(--tx2);margin-top:9px;padding-left:14px;text-indent:-14px}
+
+/* B. calendar */
+.calwrap{overflow-x:auto}
+.cal{min-width:840px}
+.hdr,.row{display:grid;grid-template-columns:206px 74px repeat(4,1fr)}
+.hdr>div{padding:7px 8px;font-size:12px;color:var(--tx2);border-bottom:1px solid var(--grid);font-weight:600}
+.hdr .d{text-align:center;border-left:1px solid var(--grid)}
+.hdr .d.today{background:var(--today);color:var(--blue)}
+.row{position:relative;border-bottom:1px solid var(--grid);min-height:62px}
+.who{padding:9px 10px 9px 2px;border-right:1px solid var(--grid)}
+.who .nm{font-weight:650;font-size:13.5px}
+.who .ro{font-size:11.5px;color:var(--tx3)}
+.badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.bdg{font-size:10.5px;border:1px solid var(--bd);border-radius:12px;padding:1px 6px;color:var(--tx2);white-space:nowrap}
+.bdg.r{color:var(--red);border-color:var(--red)}
+.bdg.a{color:var(--amber);border-color:var(--amber)}
+.bdg.g{color:var(--green);border-color:var(--green)}
+.uns{padding:9px 6px;text-align:center;border-right:1px solid var(--grid);color:var(--tx2);font-variant-numeric:tabular-nums}
+.uns b{display:block;font-size:17px;color:var(--tx);font-weight:650}
+.cell{border-left:1px solid var(--grid)}
+.cell.today{background:var(--today)}
+.lane{grid-column:3/-1;grid-row:1;display:grid;grid-template-columns:repeat(4,1fr);align-content:start;gap:4px 0;padding:7px 0;position:relative;z-index:2;pointer-events:none}
+.blk{pointer-events:auto;position:relative;margin:0 4px;border-radius:12px;padding:5px 8px;font-size:11.5px;line-height:1.42;border:1px solid var(--blueBd);background:var(--blueFill);min-width:0}
+.blk a{color:var(--blue);font-weight:600}
+.blk .st{color:var(--tx2);font-size:10.5px;display:block}
+.blk.over{border-color:var(--redBd);background:var(--redFill)}
+.blk.over .st{color:var(--red)}
+.blk.blocked{background:transparent;border-style:dashed;border-color:var(--bd)}
+.blk.handed{background:transparent;border-color:var(--bd)}
+.tipm{position:absolute;top:3px;right:5px;font-size:10px;cursor:help;opacity:.75}
+.tip{display:none;position:absolute;z-index:30;top:100%;left:0;width:270px;background:var(--card);
+  border:1px solid var(--bd);border-radius:12px;padding:9px 11px;font-size:11.5px;color:var(--tx2);
+  box-shadow:0 6px 22px rgba(0,0,0,.16);line-height:1.5}
+.blk:hover .tip,.blk:focus .tip,.blk:focus-within .tip{display:block}
+.blk.rt .tip{left:auto;right:0}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--tx2);margin-top:11px}
+.sw{display:inline-block;width:22px;height:11px;border-radius:4px;vertical-align:-1px;margin-right:5px;border:1px solid var(--blueBd);background:var(--blueFill)}
+.sw.over{border-color:var(--redBd);background:var(--redFill)}
+.sw.blocked{background:transparent;border-style:dashed;border-color:var(--bd)}
+.sw.handed{background:transparent;border-color:var(--bd)}
+
+/* C. people */
+details.p{background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-bottom:10px;padding:0}
+details.p>summary{list-style:none;cursor:pointer;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+details.p>summary::-webkit-details-marker{display:none}
+details.p>summary::after{content:"▸";margin-left:auto;color:var(--tx3);font-size:13px}
+details.p[open]>summary::after{content:"▾"}
+details.p>summary .nm{font-weight:650;font-size:14.5px}
+details.p>summary .ro{color:var(--tx3);font-size:12px}
+details.p>summary .sm{color:var(--tx2);font-size:12.5px}
+.body{padding:2px 18px 18px}
+.grp{margin-top:13px}
+.grp .t{font-size:12.5px;font-weight:650;margin-bottom:5px}
+ul.l{margin:0;padding-left:19px}
+ul.l li{margin-bottom:4px;font-size:12.5px;color:var(--tx2)}
+ul.l li b{color:var(--tx);font-weight:600}
+.tag{font-size:10.5px;border:1px solid var(--bd);border-radius:12px;padding:0 5px;color:var(--tx3);margin-left:4px;white-space:nowrap}
+.sos{border:1px solid var(--boxbd);background:var(--box);border-radius:12px;padding:11px 13px;margin-top:13px;font-size:12.5px}
+.sos .t{font-weight:650;margin-bottom:3px}
+table.g{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+table.g th,table.g td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--grid);vertical-align:top}
+table.g th{color:var(--tx2);font-weight:600;font-size:11.5px}
+table.g td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+.foot{font-size:12px;color:var(--tx2)}
+.foot b{color:var(--tx)}
+
+/* ---- dataviz tokens：序階單一藍色階，light/dark 各自選定 ---- */
+.viz{
+  --s1:#86b6ef; --s2:#5598e7; --s3:#2a78d6; --s4:#1c5cab; --s5:#104281;
+  --axis:#c3c2b7; --gridline:#e1e0d9; --muted:#898781;
+  --st-good:#0ca30c; --st-warn:#fab219; --st-crit:#d03b3b;
+}
+@media (prefers-color-scheme:dark){
+  .viz{ --s1:#b7d3f6; --s2:#86b6ef; --s3:#5598e7; --s4:#2a78d6; --s5:#1c5cab;
+        --axis:#383835; --gridline:#2c2c2a; }
+}
+.vizgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:820px){.vizgrid{grid-template-columns:1fr}}
+.fig{border:1px solid var(--bd);border-radius:12px;padding:15px 16px;background:var(--card)}
+.fig .ft{font-size:13px;font-weight:650;margin-bottom:2px}
+.fig .fs{font-size:11.5px;color:var(--tx2);margin-bottom:11px}
+.fig figcaption{font-size:11.5px;color:var(--tx3);margin-top:9px;line-height:1.5}
+
+/* stat tiles */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media (max-width:820px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{border:1px solid var(--bd);border-radius:12px;padding:13px 15px;background:var(--card)}
+.tile .k{font-size:11.5px;color:var(--tx2)}
+.tile .v{font-size:28px;font-weight:650;color:var(--blue);letter-spacing:-.02em;line-height:1.15;margin:2px 0 1px}
+.tile .n{font-size:11.5px;color:var(--tx3)}
+.tile .n b{color:var(--tx2);font-weight:600}
+
+/* bars */
+.brow{display:grid;grid-template-columns:92px 1fr 58px;gap:9px;align-items:center;margin-bottom:7px;font-size:12px}
+.brow .lb{color:var(--tx2);text-align:right}
+.btrack{position:relative;height:20px;background:transparent;border-radius:4px}
+.bfill{height:20px;border-radius:0 4px 4px 0;background:var(--s3)}
+.brow .vl{font-variant-numeric:tabular-nums;color:var(--tx);font-weight:600}
+
+/* stacked */
+.srow{display:grid;grid-template-columns:92px 1fr 42px;gap:9px;align-items:center;margin-bottom:6px;font-size:12px}
+.srow .lb{color:var(--tx2);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar{display:flex;height:20px;border-radius:4px;overflow:hidden}
+.seg{position:relative;height:20px;margin-right:2px;border-radius:2px}
+.seg:last-child{margin-right:0}
+.seg:hover::after,.seg:focus::after{content:attr(data-t);position:absolute;bottom:26px;left:50%;
+  transform:translateX(-50%);white-space:nowrap;background:var(--card);color:var(--tx);
+  border:1px solid var(--bd);border-radius:8px;padding:4px 8px;font-size:11px;z-index:20;
+  box-shadow:0 4px 16px rgba(0,0,0,.16)}
+.legend2{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--tx2);margin-top:10px}
+.legend2 i{display:inline-block;width:13px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+
+/* dependency diagram */
+.dep text{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif}
+.dep .bx{fill:var(--card);stroke:var(--bd);stroke-width:1}
+.dep .bx.root{stroke:var(--st-crit);stroke-width:1.5}
+.dep .k{font-size:11px;font-weight:650;fill:var(--blue)}
+.dep .t{font-size:9.5px;fill:var(--tx2)}
+.dep .ln{stroke:var(--axis);stroke-width:1.5;fill:none;marker-end:url(#ah)}
+.dep .ln.crit{stroke:var(--st-crit)}
+table.dv{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+table.dv th,table.dv td{text-align:left;padding:5px 7px;border-bottom:1px solid var(--grid)}
+table.dv th{color:var(--tx2);font-weight:600;font-size:11px}
+table.dv td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+</style></head><body><div class="wrap">
+<h1>JobHub 團隊看板 · JOBHUB 衝刺 12</h1>
+<p class="sub">2026-08-12（三）17:45 Asia/Taipei ｜ Sprint 8/10 17:36 → 8/14 07:58 ｜ 工作天 8/10–8/13 共 4 天，<b>含今日剩 2 天</b> ｜ 母卡 44 張</p>
+<div class="card viz" style="background:transparent;border:0;padding:0"><h2>視覺化摘要</h2><div class="tiles"><div class="tile"><div class="k">母卡完成率</div><div class="v">9.1%</div><div class="n">4 / 44 張 · 昨日 <b>4.7%</b> · 今晨 <b>9.3%</b></div></div><div class="tile"><div class="k">剩餘工作天</div><div class="v">2</div><div class="n">8/12（今日）、8/13 · Sprint 8/14 07:58 結束</div></div><div class="tile"><div class="k">被擋住的卡</div><div class="v">13</div><div class="n">真實 issuelinks 登記 · Bill 擋 8、未指派的 670 擋 5</div></div><div class="tile"><div class="k">沒有 owner 的位置</div><div class="v">15</div><div class="n">母卡 2 ＋ 子任務 13 · <b>Goal ① ② 跳票主因</b></div></div></div><div class="vizgrid"><figure class="fig"><div class="ft">母卡完成率 vs 子任務完成率</div><div class="fs">同一個 Sprint、同一批人，兩個分母</div><div class="brow"><div class="lb">母卡</div><div class="btrack"><div class="bfill" style="width:9.1%"></div></div><div class="vl">9.1%</div></div><div class="brow"><div class="lb"></div><div style="font-size:11px;color:var(--tx3)">4 / 44 張</div><div></div></div><div class="brow"><div class="lb">子任務</div><div class="btrack"><div class="bfill" style="width:59.2%"></div></div><div class="vl">59.2%</div></div><div class="brow"><div class="lb"></div><div style="font-size:11px;color:var(--tx3)">103 / 174 張</div><div></div></div><figcaption>差距 <b>50 個百分點</b>。工作有在做（子任務 103 張完成），但傘卡與母卡沒人關——所以 Sprint 報表看起來像整期停擺。這也是 QA Lodifa Chen 子任務完成率 92% 卻只有 1 張母卡完成的原因。</figcaption></figure><figure class="fig"><div class="ft">每個人的母卡狀態分布</div><div class="fs">顏色為單一色階、深淺＝流程階段；滑過各段可看張數</div><div class="srow"><div class="lb">Quincy Chen</div><div class="sbar" style="width:100.0%"><div class="seg" tabindex="0" style="flex:9;background:var(--s1)" data-t="Quincy Chen · 待辦 9 張"></div><div class="seg" tabindex="0" style="flex:2;background:var(--s2)" data-t="Quincy Chen · 進行中 2 張"></div><div class="seg" tabindex="0" style="flex:1;background:var(--s4)" data-t="Quincy Chen · DEV DONE 1 張"></div><div class="seg" tabindex="0" style="flex:1;background:var(--s5)" data-t="Quincy Chen · 完成 1 張"></div></div><div class="vl" style="font-variant-numeric:tabular-nums;color:var(--tx2);font-size:11.5px">13 張</div></div><div class="srow"><div class="lb">Bill Wang</div><div class="sbar" style="width:84.6%"><div class="seg" tabindex="0" style="flex:10;background:var(--s1)" data-t="Bill Wang · 待辦 10 張"></div><div class="seg" tabindex="0" style="flex:1;background:var(--s5)" data-t="Bill Wang · 完成 1 張"></div></div><div class="vl" style="font-variant-numeric:tabular-nums;color:var(--tx2);font-size:11.5px">11 張</div></div><div class="srow"><div class="lb">Heidi Tsai</div><div class="sbar" style="width:53.8%"><div class="seg" tabindex="0" style="flex:3;background:var(--s1)" data-t="Heidi Tsai · 待辦 3 張"></div><div class="seg" tabindex="0" style="flex:1;background:var(--s2)" data-t="Heidi Tsai · 進行中 1 張"></div><div class="seg" tabindex="0" style="flex:3;background:var(--s4)" data-t="Heidi Tsai · DEV DONE 3 張"></div></div><div class="vl" style="font-variant-numeric:tabular-nums;color:var(--tx2);font-size:11.5px">7 張</div></div><div class="srow"><div class="lb">Erica lh Lee</div><div class="sbar" style="width:38.5%"><div class="seg" tabindex="0" style="flex:2;background:var(--s1)" data-t="Erica lh Lee · 待辦 2 張"></div><div class="seg" tabindex="0" style="flex:1;background:var(--s2)" data-t="Erica lh Lee · 進行中 1 張"></div><div class="seg" tabindex="0" style="flex:1;background:var(--s4)" data-t="Erica lh Lee · DEV DONE 1 張"></div><div class="seg" tabindex="0" style="flex:1;background:var(--s5)" data-t="Erica lh Lee · 完成 1 張"></div></div><div class="vl" style="font-variant-numeric:tabular-nums;color:var(--tx2);font-size:11.5px">5 張</div></div><div class="srow"><div class="lb">Lodifa Chen</div><div class="sbar" style="width:38.5%"><div class="seg" tabindex="0" style="flex:4;background:var(--s3)" data-t="Lodifa Chen · 測試中 4 張"></div><div class="seg" tabindex="0" style="flex:1;background:var(--s5)" data-t="Lodifa Chen · 完成 1 張"></div></div><div class="vl" style="font-variant-numeric:tabular-nums;color:var(--tx2);font-size:11.5px">5 張</div></div><div class="srow"><div class="lb">陳語柔</div><div class="sbar" style="width:7.7%"><div class="seg" tabindex="0" style="flex:1;background:var(--s4)" data-t="陳語柔 · DEV DONE 1 張"></div></div><div class="vl" style="font-variant-numeric:tabular-nums;color:var(--tx2);font-size:11.5px">1 張</div></div><div class="srow"><div class="lb">未指派</div><div class="sbar" style="width:15.4%"><div class="seg" tabindex="0" style="flex:2;background:var(--s1)" data-t="未指派 · 待辦 2 張"></div></div><div class="vl" style="font-variant-numeric:tabular-nums;color:var(--tx2);font-size:11.5px">2 張</div></div><div class="legend2"><span><i style="background:var(--s1)"></i>待辦</span><span><i style="background:var(--s2)"></i>進行中</span><span><i style="background:var(--s3)"></i>測試中</span><span><i style="background:var(--s4)"></i>DEV DONE</span><span><i style="background:var(--s5)"></i>完成</span></div><figcaption>Quincy Chen 一個人 13 張（30%）；Bill Wang 11 張裡 10 張還沒開始，而那 10 張正是 Goal ① 的全部。Lodifa Chen 整列是測試中，<b>沒有任何一張母卡在她手上是「還沒開始」</b>——QA 不是瓶頸。</figcaption><details style="margin-top:10px"><summary style="font-size:11.5px;color:var(--tx2);cursor:pointer">以表格檢視</summary><table class="dv"><tr><th>人</th><th>待辦</th><th>進行中</th><th>測試中</th><th>DEV DONE</th><th>完成</th><th>合計</th></tr><tr><td>Quincy Chen</td><td class="n">9</td><td class="n">2</td><td class="n">0</td><td class="n">1</td><td class="n">1</td><td class="n"><b>13</b></td></tr><tr><td>Bill Wang</td><td class="n">10</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">1</td><td class="n"><b>11</b></td></tr><tr><td>Heidi Tsai</td><td class="n">3</td><td class="n">1</td><td class="n">0</td><td class="n">3</td><td class="n">0</td><td class="n"><b>7</b></td></tr><tr><td>Erica lh Lee</td><td class="n">2</td><td class="n">1</td><td class="n">0</td><td class="n">1</td><td class="n">1</td><td class="n"><b>5</b></td></tr><tr><td>Lodifa Chen</td><td class="n">0</td><td class="n">0</td><td class="n">4</td><td class="n">0</td><td class="n">1</td><td class="n"><b>5</b></td></tr><tr><td>陳語柔</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">1</td><td class="n">0</td><td class="n"><b>1</b></td></tr><tr><td>未指派</td><td class="n">2</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n"><b>2</b></td></tr></table></details></figure><figure class="fig" style="grid-column:1/-1"><div class="ft">Goal ① AI Tag 的依賴鏈（issuelinks 真實登記，非推論）</div><div class="fs">箭頭＝「先做完才能做」。紅框那張不屬於任何 Sprint，不會出現在任何人的看板上。</div><svg class="dep" viewBox="0 0 560 300" width="100%" height="300" role="img" aria-label="M4 依賴鏈：670 擋住 675/676/677/679/680，這些再擋住 674"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--axis)"/></marker></defs><path class="ln crit" d="M128,120 C154.0,120 154.0,40 176,40"/><path class="ln crit" d="M128,120 C154.0,120 154.0,100 176,100"/><path class="ln crit" d="M128,120 C154.0,120 154.0,160 176,160"/><path class="ln crit" d="M128,120 C154.0,120 154.0,220 176,220"/><path class="ln crit" d="M128,120 C154.0,120 154.0,280 176,280"/><path class="ln" d="M298,40 C325.0,40 325.0,140 348,140"/><path class="ln" d="M298,100 C325.0,100 325.0,140 348,140"/><path class="ln" d="M298,220 C325.0,220 325.0,140 348,140"/><path class="ln" d="M298,280 C325.0,280 325.0,140 348,140"/><rect class="bx root" x="10" y="100" width="118" height="40" rx="8"/><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-670" target="_blank" rel="noopener"><text class="k" x="19" y="116">670</text></a><text class="t" x="19" y="130">P1 · 未指派</text><text class="t" x="10" y="158" style="fill:var(--st-crit);font-weight:650">⛔ 不屬任何 Sprint</text><text class="t" x="10" y="171">prototype to code</text><rect class="bx " x="180" y="20" width="118" height="40" rx="8"/><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-675" target="_blank" rel="noopener"><text class="k" x="189" y="36">675</text></a><text class="t" x="189" y="50">FR-AI-01 · Bill</text><rect class="bx " x="180" y="80" width="118" height="40" rx="8"/><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-676" target="_blank" rel="noopener"><text class="k" x="189" y="96">676</text></a><text class="t" x="189" y="110">FR-AI-02 · Bill</text><rect class="bx " x="180" y="140" width="118" height="40" rx="8"/><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-677" target="_blank" rel="noopener"><text class="k" x="189" y="156">677</text></a><text class="t" x="189" y="170">FR-AI-03 · Bill</text><rect class="bx " x="180" y="200" width="118" height="40" rx="8"/><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-679" target="_blank" rel="noopener"><text class="k" x="189" y="216">679</text></a><text class="t" x="189" y="230">FR-AI-05 · Bill</text><rect class="bx " x="180" y="260" width="118" height="40" rx="8"/><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-680" target="_blank" rel="noopener"><text class="k" x="189" y="276">680</text></a><text class="t" x="189" y="290">FR-AI-06 · Bill</text><rect class="bx " x="352" y="120" width="118" height="40" rx="8"/><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-674" target="_blank" rel="noopener"><text class="k" x="361" y="136">674</text></a><text class="t" x="361" y="150">NFR-01 品質 Gate</text><text class="t" x="352" y="178">被 4 張擋住（675/676/679/680）</text></svg><figcaption><b>整條鏈的根在 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-670" target="_blank" rel="noopener">JOBHUB-670</a></b>——P1、待辦、未指派，而且 <code>customfield_10020=null</code>，代表它不屬於任何 Sprint。因為不在 Sprint 裡，它不會出現在任何人的看板上，也不會有人主動撿；但 issuelinks 上它真實擋著 675／676／677／679／680 五張。再往下，其中 675／676／679／680 四張擋住 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-674" target="_blank" rel="noopener">JOBHUB-674</a>（LLM 品質驗收 Gate）——677 在 issuelinks 上未登記這條，所以圖上沒有畫。（674 的卡片描述另列 FR-AI-04、NFR-02／03 為前置，但那三張不在本期 Sprint 內。）另外 9 張 [FE] 子任務全部未指派——即使 Bill Wang 把 [BE] 交出來，也沒有人接。<br><b>今天指派 670 一個名字，是解開 Goal ① 成本最低的一個動作。</b></figcaption></figure></div></div>
+<div class="alert red"><span class="ic">🛑</span><div><div class="ttl">今天就是 8/12 上線日，而上線範圍內 16 張只有 1 張在進行中</div><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-416" target="_blank" rel="noopener">JOBHUB-416</a> 的規格異動描述載明「<b>上線 8/12，前後端必須同批部署</b>」。實測：8/12 上線前提 16 張裡 15 張仍是待辦，整期母卡完成率 <b>9.1%（4/44）</b>，剩 2 個工作天。<b>需要的決定：今天縮上線範圍，還是今天改期——不做決定等於默認改期。</b></div></div>
+<div class="alert amber"><span class="ic">⚠️</span><div><div class="ttl">本日新增 3 張 DEV DONE，全部同時轉派給 PM——與 08-10 被整批退回的模式相同</div><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-426" target="_blank" rel="noopener">JOBHUB-426</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-468" target="_blank" rel="noopener">JOBHUB-468</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-568" target="_blank" rel="noopener">JOBHUB-568</a> 今天從 Quincy Chen 名下改為 DEV DONE 並轉派 Heidi Tsai。對照 08-10：Heidi 親自 UAT 上一批批次 DEV DONE 卡，<b>3 張退回 3 張</b>（437／613／612）。剩 2 個工作天，建議今天就實測，不要留到 8/13。</div></div>
+<div class="alert red"><span class="ic">📅</span><div><div class="ttl">週曆的日期多為「示意」——本期母卡填寫「開始日期」者＝ 0 張</div>218 張卡（母卡 44 ＋ 子任務 174）中<b>只有 10 張有任何日期</b>：母卡 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-149" target="_blank" rel="noopener">JOBHUB-149</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-172" target="_blank" rel="noopener">JOBHUB-172</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-259" target="_blank" rel="noopener">JOBHUB-259</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-400" target="_blank" rel="noopener">JOBHUB-400</a> 僅有截止日 8/12、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-706" target="_blank" rel="noopener">JOBHUB-706</a> 截止 8/5（已完成）；子任務 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-687" target="_blank" rel="noopener">JOBHUB-687</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-690" target="_blank" rel="noopener">JOBHUB-690</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-693" target="_blank" rel="noopener">JOBHUB-693</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-697" target="_blank" rel="noopener">JOBHUB-697</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-700" target="_blank" rel="noopener">JOBHUB-700</a>（Bill Wang 的 M4 [BE]，唯一有起訖日者，且全數逾期）。<b>下方週曆只有 Lodifa Chen 那一列與 Bill Wang 的逾期塊使用真實日期，其餘區塊皆為示意</b>，用來呈現負載與相依，不代表任何人真的排了那幾天。<b>真實狀態是：39 張母卡全部在「未排期」欄。</b></div></div>
+<div class="card"><h2>A ｜ Sprint Goal（本期 goal 全文逐行拆解後重新推導）</h2>
+<p class="faint" style="margin:-6px 0 12px">Jira goal 欄位原文：<code>1. AI Tag / 2. PRD環境 / 3. 新手導覽 / 4. Bug修復</code>　·　<b>歸屬全部是推導出來的</b>，判定依據逐條列在下方，請確認有無分錯。</p>
+<div class="pills">
+<div class="pill"><div class="nm">① AI Tag</div><div class="num">1 / 10</div><div class="meta">完成 1 · 未完成 9 · 剩 2 天</div><div class="warn">⚠️ 2 張歸屬有疑慮</div></div>
+<div class="pill"><div class="nm">② PRD環境</div><div class="num">0 / 1</div><div class="meta">完成 0 · 未完成 1 · 剩 2 天</div><div class="warn">⚠️ 歸屬本日已變更</div></div>
+<div class="pill"><div class="nm">③ 新手導覽</div><div class="num">0 / 2</div><div class="meta">完成 0 · 未完成 2 · 剩 2 天</div><div class="warn">⚠️ 本體是 P3、零進度</div></div>
+<div class="pill"><div class="nm">④ Bug修復</div><div class="num">0 / 2</div><div class="meta">完成 0 · 未完成 2 · 剩 2 天</div><div class="warn">⚠️ 無法判定達成與否</div></div>
+<div class="pill"><div class="nm">非 Goal</div><div class="num">3 / 29</div><div class="meta">佔全期 <b>66%</b> · 剩 2 天</div><div class="warn">⚠️ 三分之二的卡不服務任何 goal</div></div>
+</div>
+<hr class="hair">
+<h3>每個 Goal 的判定依據</h3>
+<div class="basis"><b>① AI Tag（1/10）</b>　基準＝ parent Epic <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-500" target="_blank" rel="noopener">JOBHUB-500</a>「AI 隱性標籤抽取（階段一）」的 9 張母卡（<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-357" target="_blank" rel="noopener">JOBHUB-357</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-497" target="_blank" rel="noopener">JOBHUB-497</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-664" target="_blank" rel="noopener">JOBHUB-664</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-666" target="_blank" rel="noopener">JOBHUB-666</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-675" target="_blank" rel="noopener">JOBHUB-675</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-676" target="_blank" rel="noopener">JOBHUB-676</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-677" target="_blank" rel="noopener">JOBHUB-677</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-679" target="_blank" rel="noopener">JOBHUB-679</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-680" target="_blank" rel="noopener">JOBHUB-680</a>，其中 7 張帶 label <code>module-ai-tag</code>／<code>m4</code>）＋卡名關鍵詞「AI Tag」命中的前置卡 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-381" target="_blank" rel="noopener">JOBHUB-381</a>「AI Tag 調研 &amp; 系統設計」（無 parent，依前置規則納入，08-11 已結案）。</div>
+<div class="basis" style="color:var(--amber)">⚠️ 最可能分錯：<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-497" target="_blank" rel="noopener">JOBHUB-497</a>（履歷解析分層）與 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-357" target="_blank" rel="noopener">JOBHUB-357</a>（上傳解析失敗）僅靠 parent Epic 歸入，卡名與 AI Tag 無直接關係。</div>
+<div class="basis"><b>② PRD環境（0/1）</b>　基準＝ 卡名關鍵詞「PRD 環境」唯一命中 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-338" target="_blank" rel="noopener">JOBHUB-338</a>「PRD 環境建置」（進行中）。子任務 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-348" target="_blank" rel="noopener">JOBHUB-348</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-349" target="_blank" rel="noopener">JOBHUB-349</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-350" target="_blank" rel="noopener">JOBHUB-350</a> 隨母卡歸入，三張全待辦、全未指派。</div>
+<div class="basis" style="color:var(--amber)">⚠️ 與昨日不同：08-12 早上快照把 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-493" target="_blank" rel="noopener">JOBHUB-493</a>（[XE]白名單後台）當作上線前置歸入 ②，本次重新推導後移出——該卡卡名與描述皆無 PRD 字樣，也無 issuelinks 登記，歸屬依據不足，改列非 Goal「等驗收」。</div>
+<div class="basis"><b>③ 新手導覽（0/2）</b>　基準＝ 卡名命中「新手導覽」的 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-582" target="_blank" rel="noopener">JOBHUB-582</a>（P3、待辦）＋前置 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-468" target="_blank" rel="noopener">JOBHUB-468</a>「空狀態導流：首登啟動鏈提示」。前置判定依據＝ 582 的 07-30 留言明寫「拆成三個組件分批交付（468 先出→檢查清單→導覽腳本）」，兩卡同一條啟動鏈（<b>推論，非 issuelinks 登記</b>）。</div>
+<div class="basis" style="color:var(--amber)">⚠️ Goal 本體 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-582" target="_blank" rel="noopener">JOBHUB-582</a> 是 P3、待辦，唯一子任務 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-728" target="_blank" rel="noopener">JOBHUB-728</a> 未指派；本期新增的 goal 項卻是全表最低優先級。</div>
+<div class="basis"><b>④ Bug修復（0/2）</b>　基準＝ 母卡層 <code>issuetype=錯誤</code> 或卡名前綴 <code>[Bug]</code> → 只有 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-565" target="_blank" rel="noopener">JOBHUB-565</a>（P1、待辦、需 ADR、零留言）與 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-568" target="_blank" rel="noopener">JOBHUB-568</a>（P1、本日 進行中→DEV DONE）。goal 未指定優先級，故不套 priority 過濾。</div>
+<div class="basis" style="color:var(--amber)">⚠️ 無法判定達成與否：母卡層只有 2 張，子任務層另有 <b>24 張 [BUG] 未完成</b>，分母差 12 倍。建議改寫為可判定版本：「<b>P0/P1 Bug 清零</b>」——實測子任務層 24 張 [BUG] <b>全部是 P2／P3，P0/P1 已為 0</b>，且 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-400" target="_blank" rel="noopener">JOBHUB-400</a> 今日 QA 留言「僅針對 P0、P1 bug 修復和複測，P2 以下待後續安排」，這條改寫今天就能判定為<b>已達成</b>。</div>
+<div class="basis" style="margin-top:10px"><b>Goal 卡數 / 總卡數 ＝ 15 / 44（34%）</b>　·　本期 goal 涵蓋不到全期三分之一的卡；另外 29 張（66%）不服務任何 goal。</div>
+<hr class="hair">
+<h3>非 Goal 的 29 張：為什麼它們在這個 Sprint 裡</h3>
+<table class="g"><tr><th style="width:34%">分組</th><th>卡號</th><th style="width:38%">建議決定</th></tr>
+<tr><td><b>驗證中 E2E（4 張）</b><div class="faint">全為測試中、真實截止日就是今天 8/12，底下共 51 張未完成子任務。</div></td><td><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-149" target="_blank" rel="noopener">JOBHUB-149</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-172" target="_blank" rel="noopener">JOBHUB-172</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-259" target="_blank" rel="noopener">JOBHUB-259</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-400" target="_blank" rel="noopener">JOBHUB-400</a></td><td>建議決定：<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-400" target="_blank" rel="noopener">JOBHUB-400</a> 今日 QA 已留言「UAT 測試完成／PRD 測試完成（P0、P1）」→ 今天就關掉；其餘三張把驗收基準線改為「P0/P1 清零」，P2 以下（24 張 [BUG] 全是 P2/P3）明確移出本期。</td></tr>
+<tr><td><b>等驗收（4 張 DEV DONE，全無指定驗收人）</b><div class="faint">299 停滯最久（最後留言 07-01，26 個工作天狀態未變）；426 為今日新轉入 DEV DONE。</div></td><td><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-299" target="_blank" rel="noopener">JOBHUB-299</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-402" target="_blank" rel="noopener">JOBHUB-402</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-426" target="_blank" rel="noopener">JOBHUB-426</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-493" target="_blank" rel="noopener">JOBHUB-493</a></td><td>建議決定：今天指定驗收人（QA Lodifa 或 PM 直接 UAT），否則 8/13 收 Sprint 時這 4 張只能整批滾到下一期。</td></tr>
+<tr><td><b>8/12 上線前提（16 張）</b><div class="faint">Epic <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-417" target="_blank" rel="noopener">JOBHUB-417</a>「職缺中心上線前調整」扣除已歸入 ③④ 的卡後剩餘，加上今日新開的 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-740" target="_blank" rel="noopener">JOBHUB-740</a>（下次上線需 SRE 協助）。16 張裡只有 613 進行中，其餘 15 張待辦。</div></td><td><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-418" target="_blank" rel="noopener">JOBHUB-418</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-420" target="_blank" rel="noopener">JOBHUB-420</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-428" target="_blank" rel="noopener">JOBHUB-428</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-434" target="_blank" rel="noopener">JOBHUB-434</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-442" target="_blank" rel="noopener">JOBHUB-442</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-444" target="_blank" rel="noopener">JOBHUB-444</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-461" target="_blank" rel="noopener">JOBHUB-461</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-473" target="_blank" rel="noopener">JOBHUB-473</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-474" target="_blank" rel="noopener">JOBHUB-474</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-475" target="_blank" rel="noopener">JOBHUB-475</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-570" target="_blank" rel="noopener">JOBHUB-570</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-576" target="_blank" rel="noopener">JOBHUB-576</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-610" target="_blank" rel="noopener">JOBHUB-610</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-612" target="_blank" rel="noopener">JOBHUB-612</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-613" target="_blank" rel="noopener">JOBHUB-613</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-740" target="_blank" rel="noopener">JOBHUB-740</a></td><td>建議決定：今天縮上線範圍。<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-416" target="_blank" rel="noopener">JOBHUB-416</a> 描述載明「上線 8/12，前後端必須同批部署」——剩 2 個工作天、15 張待辦，不做決定等於默認改期。</td></tr>
+<tr><td><b>治理型＋已完成雜項（5 張）</b><div class="faint">257／551 無交付相依；200／437／706 已完成。</div></td><td><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-257" target="_blank" rel="noopener">JOBHUB-257</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-551" target="_blank" rel="noopener">JOBHUB-551</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-200" target="_blank" rel="noopener">JOBHUB-200</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-437" target="_blank" rel="noopener">JOBHUB-437</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-706" target="_blank" rel="noopener">JOBHUB-706</a></td><td>建議決定：257／551 移出本期，或明確標為 20% 時間，避免佔用上線收尾的注意力。</td></tr>
+</table></div>
+<div class="card"><h2>B ｜ 週曆：什麼時候做</h2>
+<p class="faint" style="margin:-6px 0 12px">點人名可展開下方對應區塊。區塊寬度＝工期；同一天疊多塊＝超載。滑鼠移到 📝 或用鍵盤 Tab 聚焦可看備註。</p>
+<div class="calwrap"><div class="cal">
+<div class="hdr"><div>人名</div><div style="text-align:center">未排期</div>
+<div class="d">8/10（一）</div>
+<div class="d">8/11（二）</div>
+<div class="d today">8/12（三）· 今日</div>
+<div class="d">8/13（四）</div>
+</div>
+<div class="row">
+<div class="who"><div class="nm"><a href="#p-quincy">Quincy Chen</a></div><div class="ro">前端</div><div class="badges">
+<span class="bdg ">13 未排期</span>
+<span class="bdg a">4 張等別人拍板</span>
+<span class="bdg ">本日轉出 3 張</span>
+</div></div>
+<div class="uns"><b>13</b><span class="faint">張</span></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell today"></div>
+<div class="cell"></div>
+<div class="lane"><div class="blk blocked" style="grid-column:3/5" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-418" target="_blank" rel="noopener">JOBHUB-418</a> 應徵管理職缺選擇器<span class="st">⛔ 等 ADR-0023 拍板</span><div class="tip">07-28 起卡在「維持 ADR-0023」與「重構兩層導航」二選一。這張不決定，應徵管理的預設落點會一直跳動，UAT 每次結果都不同。</div></div><div class="blk blocked" style="grid-column:3/5" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-461" target="_blank" rel="noopener">JOBHUB-461</a> 通知候選人單一入口<span class="st">⛔ 等通知中心邊界</span><div class="tip">07-28 留言指出需與尚未實作的通知中心整合、且要併 JOBHUB-430。邊界不定就無法估工，放著只會在 8/13 整批滾期。</div></div><div class="blk handed" style="grid-column:3/4" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-402" target="_blank" rel="noopener">JOBHUB-402</a> 匯入紀錄建立時間<span class="st">🧩 DEV DONE 等驗收（無驗收人）</span><div class="tip">PM 已於 08-05 補齊規格並改「確認執行」，開發也交出了。缺的只是有人按驗收——這是本期最便宜的一張完成數。</div></div></div>
+</div>
+<div class="row">
+<div class="who"><div class="nm"><a href="#p-bill">Bill Wang</a></div><div class="ro">後端</div><div class="badges">
+<span class="bdg r">🚩 擋住 8</span>
+<span class="bdg ">11 未排期</span>
+<span class="bdg r">逾期 4 天</span>
+</div></div>
+<div class="uns"><b>11</b><span class="faint">張</span></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell today"></div>
+<div class="cell"></div>
+<div class="lane"><div class="blk over" style="grid-column:1/5" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-675" target="_blank" rel="noopener">JOBHUB-675</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-676" target="_blank" rel="noopener">JOBHUB-676</a> FR-AI-01／02（M4 [BE]）<span class="st">⚠️ 子任務 687/690 截止 8/6，逾期 4 工作天</span><div class="tip">全隊唯一有真實排期的一條線，排期本身已溢出上一個 Sprint。687 進行中、690 待辦，兩張都是 8/6 到期。這條不動，670 就算指派了也沒有 [BE] 可串。</div></div><div class="blk blocked" style="grid-column:3/5" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-679" target="_blank" rel="noopener">JOBHUB-679</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-680" target="_blank" rel="noopener">JOBHUB-680</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-677" target="_blank" rel="noopener">JOBHUB-677</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-664" target="_blank" rel="noopener">JOBHUB-664</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-666" target="_blank" rel="noopener">JOBHUB-666</a> M4 其餘 AI Tag 卡<span class="st">⛔ 被 JOBHUB-670 擋住（issuelinks 真實登記）</span><div class="tip">670「prototype to code」P1、待辦、未指派、且不屬任何 Sprint——所以它不會出現在任何人的看板上，卻真實擋著這 5 張的 FE 串測。9 張 [FE] 子任務也全部未指派。</div></div></div>
+</div>
+<div class="row">
+<div class="who"><div class="nm"><a href="#p-erica">Erica lh Lee</a></div><div class="ro">後端</div><div class="badges">
+<span class="bdg a">Goal ② 全在她身上</span>
+<span class="bdg ">4 未排期</span>
+<span class="bdg ">子任務 12 張未完成</span>
+</div></div>
+<div class="uns"><b>4</b><span class="faint">張</span></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell today"></div>
+<div class="cell"></div>
+<div class="lane"><div class="blk blocked" style="grid-column:3/5" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-338" target="_blank" rel="noopener">JOBHUB-338</a> PRD 環境建置<span class="st">⛔ 子任務全未指派（連續第 7 天）</span><div class="tip">348 UAT 壓測／349 送 PRD 申請單／350 PRD 壓測，三張全待辦全未指派。349 有行政前置期——今天不送單，8/13 前不可能上 PRD。缺的是 owner 不是工時。</div></div><div class="blk handed rt" style="grid-column:3/4" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-493" target="_blank" rel="noopener">JOBHUB-493</a> XE 白名單後台啟用<span class="st">🧩 DEV DONE 等驗收（零留言）</span><div class="tip">DEV DONE 但整張卡零留言、無驗收人，外部完全看不到它卡在哪。昨日快照把它算進 Goal ②，本日已移出。</div></div></div>
+</div>
+<div class="row">
+<div class="who"><div class="nm"><a href="#p-lodifa">Lodifa Chen</a></div><div class="ro">QA</div><div class="badges">
+<span class="bdg g">子任務完成率 92%</span>
+<span class="bdg ">📥 17 張等你驗收</span>
+<span class="bdg a">4 張傘卡今日到期</span>
+</div></div>
+<div class="uns"><b>1</b><span class="faint">張</span></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell today"></div>
+<div class="cell"></div>
+<div class="lane"><div class="blk blk-real" style="grid-column:3/4" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-149" target="_blank" rel="noopener">JOBHUB-149</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-172" target="_blank" rel="noopener">JOBHUB-172</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-259" target="_blank" rel="noopener">JOBHUB-259</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-400" target="_blank" rel="noopener">JOBHUB-400</a> 四張 QA 驗收傘卡<span class="st">📅 真實截止日 8/12（今日）</span><div class="tip">唯一使用真實 Jira 日期的一列。400 今日已回報 UAT／PRD 測試完成（P0、P1 範圍），其餘三張底下還有 51 張未完成子任務——但全部是 P2/P3。</div></div></div>
+</div>
+<div class="row">
+<div class="who"><div class="nm"><a href="#p-heidi">Heidi Tsai</a></div><div class="ro">PM</div><div class="badges">
+<span class="bdg r">🚩 擋住 7（推論）</span>
+<span class="bdg ">7 未排期</span>
+<span class="bdg ">📥 本日接手 3 張</span>
+</div></div>
+<div class="uns"><b>7</b><span class="faint">張</span></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell today"></div>
+<div class="cell"></div>
+<div class="lane"><div class="blk blocked" style="grid-column:3/5" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-613" target="_blank" rel="noopener">JOBHUB-613</a> 全站更名與分頁收斂 7→3<span class="st">⛔ 08-10 UAT 退回，殘留 1 處</span><div class="tip">08-10 Heidi 親自 UAT 後退回。這張是「大部分完成、殘留 1 處」，是本期最接近可結案的進行中卡。</div></div><div class="blk handed" style="grid-column:3/4" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-426" target="_blank" rel="noopener">JOBHUB-426</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-468" target="_blank" rel="noopener">JOBHUB-468</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-568" target="_blank" rel="noopener">JOBHUB-568</a> 本日 Quincy 轉入的 3 張<span class="st">🧩 DEV DONE 等你驗收</span><div class="tip">今天這 3 張同時改 DEV DONE 並轉派給你。08-10 你 UAT 過的 3 張批次 DEV DONE 卡（437/613/612）當場退回 3 張——同一個模式，建議今天就實測，不要等 8/13。</div></div><div class="blk blocked rt" style="grid-column:3/5" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-612" target="_blank" rel="noopener">JOBHUB-612</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-610" target="_blank" rel="noopener">JOBHUB-610</a> 待你裁示的 2 張<span class="st">⛔ 612 等二擇一、610 需 ADR-0057</span><div class="tip">612 是你自己 08-10 退回並留言「請 PM 裁示」的；610 從未發生過狀態變更。兩張都只等一個決定，不等工時。</div></div></div>
+</div>
+<div class="row">
+<div class="who"><div class="nm"><a href="#p-yurou">陳語柔</a></div><div class="ro">角色待確認（名單外）</div><div class="badges">
+<span class="bdg a">角色待確認</span>
+<span class="bdg r">停滯 26 工作天</span>
+</div></div>
+<div class="uns"><b>1</b><span class="faint">張</span></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell today"></div>
+<div class="cell"></div>
+<div class="lane"><div class="blk handed rt" style="grid-column:3/4" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-299" target="_blank" rel="noopener">JOBHUB-299</a> [UI驗收] 應徵管理-正職<span class="st">🧩 DEV DONE 停滯最久</span><div class="tip">最後留言 07-01（Daniel Shih 轉派給 Quincy），26 個工作天狀態未變。07-01 留言明載「本票仍僅完成 FR-APP-01/06，§1/§3/§4/§6-others 未做」——DEV DONE 與實際交付不符。</div></div></div>
+</div>
+<div class="row">
+<div class="who"><div class="nm"><a href="#p-none">未指派</a></div><div class="ro">無 owner</div><div class="badges">
+<span class="bdg r">🚩 場外 670 擋住 5 張</span>
+<span class="bdg r">13 張子任務無 owner</span>
+</div></div>
+<div class="uns"><b>2</b><span class="faint">張</span></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell today"></div>
+<div class="cell"></div>
+<div class="lane"><div class="blk blocked" style="grid-column:3/5" tabindex="0"><span class="tipm" aria-hidden="true">📝</span><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-670" target="_blank" rel="noopener">JOBHUB-670</a> [M4] P-01 prototype to code<span class="st">⛔ 不屬任何 Sprint · 擋 5 張</span><div class="tip">P1、待辦、未指派、customfield_10020=null。因為不在任何 Sprint 裡，它不會出現在任何人的看板上，卻是 Goal ① 的根阻塞。本卡不在本期 44 張內，特別畫出來。</div></div></div>
+</div>
+</div></div>
+<div class="legend"><span><i class="sw"></i>一般／示意排程</span><span><i class="sw over"></i>⚠️ 逾期（真實日期）</span><span><i class="sw blocked"></i>⛔ 被擋住／排不進去</span><span><i class="sw handed"></i>🧩 已交出等驗收</span><span>📅 ＝該塊使用真實 Jira 日期</span></div>
+</div>
+<div class="card" style="background:transparent;border:0;padding:0"><h2>C ｜ 每個人（點開找自己的名字）</h2>
+<details class="p" id="p-quincy"><summary><span class="nm">Quincy Chen</span><span class="ro">前端</span><span class="sm">13 張 · 完成 1 · 進行中 2 · DEV DONE 1 · 待辦 9</span>
+<span class="bdg a">4 張等別人拍板</span>
+<span class="bdg ">13 未排期</span>
+</summary><div class="body">
+<div class="grp"><div class="t">🔄 正在做</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-418" target="_blank" rel="noopener">JOBHUB-418</a></b> 應徵管理職缺選擇器與資訊階層 — 等 ADR-0023 拍板，自 07-28 起算 12 個工作天（來源：留言日期）<span class="tag">P2</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-461" target="_blank" rel="noopener">JOBHUB-461</a></b> 婉拒信/感謝信收斂為單一入口 — 等通知中心邊界確認，自 07-28 起算 12 個工作天（來源：留言日期）<span class="tag">P2</span></li></ul></div>
+<div class="grp"><div class="t">⬜ 還沒開始（逐張列出）</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-582" target="_blank" rel="noopener">JOBHUB-582</a></b> 新手導覽機制 — <b>Goal ③ 的本體</b>，卻是 P3。需導覽套件技術選型；前置 437 已於昨日完成，選型已無藉口再等<span class="tag">P3</span><span class="tag">Goal ③</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-576" target="_blank" rel="noopener">JOBHUB-576</a></b> 待同意建立階段是否顯示候選人身分（釐清）— 與 442 互為關聯、與 428 為 Defect 關係<span class="tag">P2</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-570" target="_blank" rel="noopener">JOBHUB-570</a></b> 職缺端看不到自己是否綁定專屬 Email 地址<span class="tag">P2</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-475" target="_blank" rel="noopener">JOBHUB-475</a></b> LLM 解析提示系統：全站「AI 解析可能有誤」盤點 — 關聯 426（今日已 DEV DONE，這張可以跟上）<span class="tag">P2</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-444" target="_blank" rel="noopener">JOBHUB-444</a></b> 按鈕樣式收斂：單頁 14 種 → 建立層級規範<span class="tag">P2</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-442" target="_blank" rel="noopener">JOBHUB-442</a></b> 待同意卡看不到候選人與來源對應（盲決策）<span class="tag">P2</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-428" target="_blank" rel="noopener">JOBHUB-428</a></b> 待建立職缺：找對應職缺與應徵人的邏輯 — 576 的 Defect 來源<span class="tag">P2</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-434" target="_blank" rel="noopener">JOBHUB-434</a></b> 移動 Modal 職缺選單無搜尋<span class="tag">P3</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-551" target="_blank" rel="noopener">JOBHUB-551</a></b> 整併 Azure DevOps 兩專案（治理型，建議移出本期）<span class="tag">P2</span></li></ul></div>
+<div class="grp"><div class="t">🧩 已交出等驗收</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-402" target="_blank" rel="noopener">JOBHUB-402</a></b> 匯入紀錄建立時間戳記 — DEV DONE、規格已於 08-05 由 PM 拍板補齊，只差有人驗收</li></ul></div>
+<div class="grp"><div class="t">✅ 完成</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-200" target="_blank" rel="noopener">JOBHUB-200</a></b> 職缺管理 repo 目錄結構重構</li></ul></div>
+<div class="grp"><div class="t">⚠️ 你的風險</div><ul class="l"><li>本期你名下 13 張，<b>今天已把 426／468／568 三張改 DEV DONE 轉給 PM</b>——08-10 那一輪 UAT 對批次 DEV DONE 卡的退回率是 3/3。若這 3 張今天被退，8/13 收 Sprint 時你會同時多出 3 張進行中。</li><li>兩張進行中（418／461）都不是缺工時，是缺一個決定，已各卡 12 個工作天。單靠你自己排期不會動。</li><li><b>Goal ③ 的本體 582 在你名下，但它是 P3、待辦、零進度。</b>Sprint 只剩 2 個工作天，這個 goal 目前掛零。</li></ul></div>
+<div class="sos"><div class="t">👉 該求救了</div>把 418（ADR-0023 二選一）與 461（通知中心邊界）兩張在 Jira 卡上把 <code>Flagged</code> 設成 <code>Impediment</code> 🚩，並在卡上 @Heidi 寫明「需要在今天內二擇一，否則本期不做」。582 若確定本期不做，請 PM 直接移出 Sprint，不要讓 Goal ③ 假性掛在看板上。<div class="faint" style="margin-top:6px">求救管道＝在該 Jira 卡上把 <code>Flagged</code> 設成 <code>Impediment</code> 🚩。</div></div>
+</div></details>
+<details class="p" id="p-bill"><summary><span class="nm">Bill Wang</span><span class="ro">後端</span><span class="sm">11 張 · 完成 1 · 待辦 10 · 🚩 擋住 8 張</span>
+<span class="bdg r">🚩 擋住 8</span>
+<span class="bdg r">逾期 4 工作天</span>
+</summary><div class="body">
+<div class="grp"><div class="t">🚩 你擋住了誰（issuelinks 真實登記）</div><ul class="l"><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-675" target="_blank" rel="noopener">JOBHUB-675</a> → 擋住 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-676" target="_blank" rel="noopener">JOBHUB-676</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-674" target="_blank" rel="noopener">JOBHUB-674</a>　<b>先做這張，整條線才會動</b></li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-676" target="_blank" rel="noopener">JOBHUB-676</a> → 擋住 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-677" target="_blank" rel="noopener">JOBHUB-677</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-678" target="_blank" rel="noopener">JOBHUB-678</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-681" target="_blank" rel="noopener">JOBHUB-681</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-674" target="_blank" rel="noopener">JOBHUB-674</a>　<b>M4 的分水嶺，四張都在它後面</b></li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-679" target="_blank" rel="noopener">JOBHUB-679</a> → 擋住 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-680" target="_blank" rel="noopener">JOBHUB-680</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-674" target="_blank" rel="noopener">JOBHUB-674</a></li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-680" target="_blank" rel="noopener">JOBHUB-680</a> → 擋住 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-674" target="_blank" rel="noopener">JOBHUB-674</a></li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-664" target="_blank" rel="noopener">JOBHUB-664</a> → 擋住 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-665" target="_blank" rel="noopener">JOBHUB-665</a></li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-474" target="_blank" rel="noopener">JOBHUB-474</a> → 擋住子任務 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-447" target="_blank" rel="noopener">JOBHUB-447</a>（Erica 進行中的 [BUG]）　<b>這條跨到別人身上</b></li></ul></div>
+<div class="grp"><div class="t">🔄 正在做（子任務層）</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-687" target="_blank" rel="noopener">JOBHUB-687</a></b> [BE] FR-AI-01 JD 6 類標籤抽取 — 進行中，起 8/5 迄 <b>8/6</b>，<b>逾期 4 個工作天</b>（母卡 675）</li></ul></div>
+<div class="grp"><div class="t">⬜ 還沒開始（逐張列出）</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-675" target="_blank" rel="noopener">JOBHUB-675</a></b> FR-AI-01 JD 6 類標籤抽取 — <b>整條 M4 的起點</b>，子任務 690 也已逾期 4 天<span class="tag">P1</span><span class="tag">Goal ①</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-676" target="_blank" rel="noopener">JOBHUB-676</a></b> FR-AI-02 標籤集確認與編輯 — 擋住 4 張，全 M4 擋最多的一張<span class="tag">P1</span><span class="tag">Goal ①</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-679" target="_blank" rel="noopener">JOBHUB-679</a></b> FR-AI-05 打標結果呈現<span class="tag">P1</span><span class="tag">Goal ①</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-680" target="_blank" rel="noopener">JOBHUB-680</a></b> FR-AI-06 三元反饋（問卷）<span class="tag">P1</span><span class="tag">Goal ①</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-664" target="_blank" rel="noopener">JOBHUB-664</a></b> S1-01 HR 上架 JD、AI 抽 6 類標籤、HR 確認 — 擋住 665<span class="tag">P1</span><span class="tag">Goal ①</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-666" target="_blank" rel="noopener">JOBHUB-666</a></b> S1-03 HR 看打標結果、三元反饋<span class="tag">P1</span><span class="tag">Goal ①</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-677" target="_blank" rel="noopener">JOBHUB-677</a></b> FR-AI-03 標籤集狀態機<span class="tag">P2</span><span class="tag">Goal ①</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-497" target="_blank" rel="noopener">JOBHUB-497</a></b> HR 編輯履歷解析結果 — 資料分層與修改紀錄<span class="tag">P2</span><span class="tag">Goal ①？</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-474" target="_blank" rel="noopener">JOBHUB-474</a></b> 履歷解析準確度 92%→逼近 100% — 擋住 Erica 的 447<span class="tag">P2</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-357" target="_blank" rel="noopener">JOBHUB-357</a></b> 上傳解析失敗的處理機制（backlog）<span class="tag">P4</span><span class="tag">Goal ①？</span></li></ul></div>
+<div class="grp"><div class="t">✅ 完成</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-381" target="_blank" rel="noopener">JOBHUB-381</a></b> AI Tag 調研 &amp; 系統設計 — 08-11 結案，解除了 16 個工作天的停滯</li></ul></div>
+<div class="grp"><div class="t">⚠️ 你的風險</div><ul class="l"><li>你是<b>全期唯一有填真實起訖日的人</b>——結果那條線就是唯一能判定逾期的線：687／690 截止 8/6（逾期 4 工作天）、693／700 截止 8/7（逾期 3 工作天）。誠實排期反而只讓自己顯得落後。</li><li>Goal ① 的 9 張 [FE] 子任務（688/689/691/692/694/698/699/701/702）<b>全部未指派</b>：你把 [BE] 交出來也沒有人接。</li><li>根阻塞 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-670" target="_blank" rel="noopener">JOBHUB-670</a> 不在任何 Sprint 裡，所以它不會出現在任何人的看板上，也不會有人主動撿。</li></ul></div>
+<div class="sos"><div class="t">👉 該求救了</div>在 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-670" target="_blank" rel="noopener">JOBHUB-670</a> 上把 <code>Flagged</code> 設成 <code>Impediment</code> 🚩 並 @Heidi，寫明「這張不指派 + 不進 Sprint，Goal ① 本期歸零」。同時把 687／690 的截止日改成一個做得到的日期——逾期 4 天不改，8/13 回顧時沒有人知道差多少。<div class="faint" style="margin-top:6px">求救管道＝在該 Jira 卡上把 <code>Flagged</code> 設成 <code>Impediment</code> 🚩。</div></div>
+</div></details>
+<details class="p" id="p-erica"><summary><span class="nm">Erica lh Lee</span><span class="ro">後端</span><span class="sm">5 張 · 完成 1 · 進行中 1 · DEV DONE 1 · 待辦 2</span>
+<span class="bdg a">Goal ② 全在她身上</span>
+<span class="bdg ">4 未排期</span>
+</summary><div class="body">
+<div class="grp"><div class="t">🔄 正在做</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-338" target="_blank" rel="noopener">JOBHUB-338</a></b> PRD 環境建置 — <b>Goal ② 唯一的卡</b>。母卡零留言，但三張子任務 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-348" target="_blank" rel="noopener">JOBHUB-348</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-349" target="_blank" rel="noopener">JOBHUB-349</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-350" target="_blank" rel="noopener">JOBHUB-350</a> <b>全待辦、全未指派、連續第 7 天</b><span class="tag">P1</span><span class="tag">Goal ②</span></li></ul></div>
+<div class="grp"><div class="t">⬜ 還沒開始（逐張列出）</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-565" target="_blank" rel="noopener">JOBHUB-565</a></b> Email 進件重複偵測規則與原始職缺保留 — <b>Goal ④ 兩張之一</b>，需 ADR，整張卡零留言<span class="tag">P1</span><span class="tag">Goal ④</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-473" target="_blank" rel="noopener">JOBHUB-473</a></b> 履歷解析無進度回饋（每頁 13 秒，單份可達分鐘級）— 零留言<span class="tag">P1</span></li></ul></div>
+<div class="grp"><div class="t">🧩 已交出等驗收</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-493" target="_blank" rel="noopener">JOBHUB-493</a></b> [XE] 白名單後台 JobHub 功能啟用 — DEV DONE、零留言、無驗收人</li></ul></div>
+<div class="grp"><div class="t">✅ 完成</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-706" target="_blank" rel="noopener">JOBHUB-706</a></b> 待同意建立職缺：職缺 status 三態擴充</li></ul></div>
+<div class="grp"><div class="t">⚠️ 你的風險</div><ul class="l"><li><b>Goal ② 整個掛在你身上，而缺的是 owner 不是工時。</b>349「送 PRD 申請單」有行政前置期——今天不送，8/13 前不可能上 PRD，Goal ② 本期必然掛零。</li><li>338／565／473 三張母卡<b>全部零留言</b>。從外面看不出你卡在哪，也就沒有人會來幫你。</li><li>你名下 12 張未完成子任務裡有 6 張是 [BUG]（384/385/401/447/554/555/660），全部 P2——依 QA 今日的口徑屬「P2 以下待後續安排」，可以正當地移出本期。</li></ul></div>
+<div class="sos"><div class="t">👉 該求救了</div>今天最有價值的一個動作：把 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-349" target="_blank" rel="noopener">JOBHUB-349</a>（送 PRD 申請單）指派給一個具體的人並今天送出。若 348/349/350 沒有人可接，在 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-338" target="_blank" rel="noopener">JOBHUB-338</a> 上把 <code>Flagged</code> 設成 <code>Impediment</code> 🚩 並 @Heidi 寫明「Goal ② 本期無法達成，缺 3 個 owner」。<div class="faint" style="margin-top:6px">求救管道＝在該 Jira 卡上把 <code>Flagged</code> 設成 <code>Impediment</code> 🚩。</div></div>
+</div></details>
+<details class="p" id="p-lodifa"><summary><span class="nm">Lodifa Chen</span><span class="ro">QA</span><span class="sm">5 張 · 完成 1 · 測試中 4 · 📥 17 張等你驗收</span>
+<span class="bdg g">子任務完成率 92%</span>
+<span class="bdg ">📥 17 張等驗收</span>
+</summary><div class="body">
+<div class="grp"><div class="t">📥 有 17 張卡在等你驗收（狀態 DEV DONE，掛在開發者名下但實際是你的待辦）</div><ul class="l"><li><b>母卡 6 張</b>：<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-299" target="_blank" rel="noopener">JOBHUB-299</a>（原負責人 陳語柔）、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-402" target="_blank" rel="noopener">JOBHUB-402</a>（Quincy Chen）、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-426" target="_blank" rel="noopener">JOBHUB-426</a>（Heidi Tsai，今日轉入）、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-468" target="_blank" rel="noopener">JOBHUB-468</a>（Heidi Tsai，今日轉入）、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-493" target="_blank" rel="noopener">JOBHUB-493</a>（Erica lh Lee）、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-568" target="_blank" rel="noopener">JOBHUB-568</a>（Heidi Tsai，今日轉入）</li><li><b>子任務 11 張</b>：<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-212" target="_blank" rel="noopener">JOBHUB-212</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-235" target="_blank" rel="noopener">JOBHUB-235</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-252" target="_blank" rel="noopener">JOBHUB-252</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-343" target="_blank" rel="noopener">JOBHUB-343</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-448" target="_blank" rel="noopener">JOBHUB-448</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-539" target="_blank" rel="noopener">JOBHUB-539</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-561" target="_blank" rel="noopener">JOBHUB-561</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-707" target="_blank" rel="noopener">JOBHUB-707</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-708" target="_blank" rel="noopener">JOBHUB-708</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-712" target="_blank" rel="noopener">JOBHUB-712</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-716" target="_blank" rel="noopener">JOBHUB-716</a></li><li class="faint">這 17 張全部<b>沒有指定驗收人</b>——沒有人被指派，就沒有人會做。</li></ul></div>
+<div class="grp"><div class="t">🧪 正在測</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-400" target="_blank" rel="noopener">JOBHUB-400</a></b> Email 匯入、職缺、應徵 E2E 測試 — <b>今日已留言「UAT 測試完成」「PRD 測試完成」（僅 P0、P1）</b>，底下 20 張未完成子任務全為 P2 以下<span class="tag">截止 8/12</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-172" target="_blank" rel="noopener">JOBHUB-172</a></b> 正職職缺管理 — 14 張未完成子任務，全 P2/P3<span class="tag">截止 8/12</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-259" target="_blank" rel="noopener">JOBHUB-259</a></b> 正職應聘管理 — 13 張未完成子任務，全 P2/P3<span class="tag">截止 8/12</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-149" target="_blank" rel="noopener">JOBHUB-149</a></b> Email 應徵自動匯入 — 4 張未完成子任務<span class="tag">截止 8/12</span></li></ul></div>
+<div class="grp"><div class="t">✅ 完成</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-437" target="_blank" rel="noopener">JOBHUB-437</a></b> 舊產品（XE）增加功能入口 — 08-11 由 Heidi 轉派給你並結案</li></ul></div>
+<div class="grp"><div class="t">⚠️ 你的風險</div><ul class="l"><li>你的子任務完成率 92%（78 張中 72 張完成）是全隊最高，但<b>四張傘卡沒關，Sprint 母卡報表上你只有 1 張完成</b>。做了的事沒有被看見。</li><li>四張傘卡的真實截止日<b>就是今天</b>，底下 51 張未完成子任務——但實測全部是 P2／P3，<b>P0/P1 已經是 0</b>。這一點今天沒有被寫在任何一張卡上。</li><li>17 張等驗收的卡全無指定驗收人。8/13 收 Sprint 時它們會整批滾期，而滾期的理由會被記成「QA 沒驗完」。</li></ul></div>
+<div class="sos"><div class="t">👉 該求救了</div>今天在 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-400" target="_blank" rel="noopener">JOBHUB-400</a> 之外的三張傘卡（149／172／259）各補一則留言，寫明「P0/P1 已清零，剩餘皆 P2 以下」，然後直接關掉 400。若你認為驗收人該由 PM 指派，在四張傘卡上把 <code>Flagged</code> 設成 <code>Impediment</code> 🚩 並 @Heidi 寫明「17 張等驗收無驗收人」。<div class="faint" style="margin-top:6px">求救管道＝在該 Jira 卡上把 <code>Flagged</code> 設成 <code>Impediment</code> 🚩。</div></div>
+</div></details>
+<details class="p" id="p-heidi"><summary><span class="nm">Heidi Tsai</span><span class="ro">PM</span><span class="sm">7 張 · 進行中 1 · DEV DONE 3 · 待辦 3 · 🚩 擋住 7（推論）</span>
+<span class="bdg r">🚩 擋住 7</span>
+<span class="bdg ">📥 本日接手 3 張</span>
+</summary><div class="body">
+<div class="grp"><div class="t">🚩 你擋住了誰（<b>推論</b>——來源為留言內文，未登記 issuelinks 或 Flagged）</div><ul class="l"><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-418" target="_blank" rel="noopener">JOBHUB-418</a>（Quincy）→ 等 ADR-0023 二選一　<b>先做這張，應徵管理整條線才會動</b></li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-461" target="_blank" rel="noopener">JOBHUB-461</a>（Quincy）→ 等通知中心邊界　<b>先給邊界，Quincy 才能估工</b></li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-568" target="_blank" rel="noopener">JOBHUB-568</a>（今日轉入你名下）→ 全站 enum 對應層「前端維護對應表 vs 後端回傳 label」待拍板</li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-426" target="_blank" rel="noopener">JOBHUB-426</a>（今日轉入你名下）→ Quincy 08-07 附「三個待確認點」</li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-612" target="_blank" rel="noopener">JOBHUB-612</a> → 你自己 08-10 退回並留言「請 PM 裁示」二擇一</li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-610" target="_blank" rel="noopener">JOBHUB-610</a> → 需 ADR-0057，changelog 從未發生狀態變更</li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-582" target="_blank" rel="noopener">JOBHUB-582</a>（Quincy，Goal ③ 本體）→ 需導覽套件技術選型拍板</li><li class="faint">另有 <b>13 張子任務</b>全為「待 PM 定義／規格確認」（483/485/494/557/558/586/587/588/599/713/726/730/733），<b>全部掛在今日到期的四張 QA 傘卡底下</b>。</li></ul></div>
+<div class="grp"><div class="t">🔄 正在做</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-613" target="_blank" rel="noopener">JOBHUB-613</a></b> 全站更名與分頁收斂 7→3 — 你 08-10 UAT 後退回，「大部分完成、殘留 1 處」，是本期最接近可結案的進行中卡<span class="tag">P1</span></li></ul></div>
+<div class="grp"><div class="t">🧩 已交出等你驗收（本日 Quincy 轉入 3 張）</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-468" target="_blank" rel="noopener">JOBHUB-468</a></b> 空狀態導流：首登啟動鏈提示 — <b>P0</b>，Goal ③ 的前置。今日 進行中→DEV DONE<span class="tag">P0</span><span class="tag">Goal ③</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-568" target="_blank" rel="noopener">JOBHUB-568</a></b> 未翻譯的英文 enum 直接顯示給 HR — 今日 進行中→DEV DONE。08-07 留言明說「兩處症狀已修完，<b>全站對應層仍待拍板</b>」<span class="tag">P1</span><span class="tag">Goal ④</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-426" target="_blank" rel="noopener">JOBHUB-426</a></b> 全站「未與外部平台串接」揭露設計 — 今日 待辦→DEV DONE<span class="tag">P2</span></li></ul></div>
+<div class="grp"><div class="t">⬜ 還沒開始（逐張列出）</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-612" target="_blank" rel="noopener">JOBHUB-612</a></b> 「待審閱」降級為未讀／已讀屬性 — 你 08-10 退回，後端 per-user 已讀資料層未做，等你二擇一<span class="tag">P1</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-610" target="_blank" rel="noopener">JOBHUB-610</a></b> 移除範本引擎：CRUD／快照凍結／PassRule 合議 — 需 ADR-0057，從未狀態變更<span class="tag">P1</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-257" target="_blank" rel="noopener">JOBHUB-257</a></b> 重整專案管理流程（治理型，建議移出本期）<span class="tag">P4</span></li></ul></div>
+<div class="grp"><div class="t">⚠️ 你的風險</div><ul class="l"><li><b>今天 Quincy 把 426／468／568 三張同時改 DEV DONE 並轉派給你。</b>08-10 你 UAT 上一批 DEV DONE 卡時，退回率是 3/3（437／613／612 全退）。同一個模式，只剩 2 個工作天可以驗。</li><li>你擋住的 7 條線<b>全部只存在於留言內文</b>——沒有一條登記在 issuelinks 或 Flagged。從 Jira 報表上看，你的 blocking 數是 0，實際是 7。</li><li>你的 13 張「待 PM 定義」子任務全部掛在今日到期的四張 QA 傘卡下。傘卡關不掉的原因有一部分在你身上，而不只是 QA。</li></ul></div>
+<div class="sos"><div class="t">👉 該求救了</div>PM 也需要求救管道。今天只做兩件事就夠：<b>（1）</b> 對 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-418" target="_blank" rel="noopener">JOBHUB-418</a>／<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-461" target="_blank" rel="noopener">JOBHUB-461</a>／<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-612" target="_blank" rel="noopener">JOBHUB-612</a> 三張各給一個「本期做／本期不做」的一句話裁示，不做決定就明確寫不做；<b>（2）</b> 決定 8/12 上線範圍要縮到哪裡並寫在 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-416" target="_blank" rel="noopener">JOBHUB-416</a> 上。剩 2 個工作天、上線範圍內 15 張待辦——不寫下來，等於默認改期。<div class="faint" style="margin-top:6px">求救管道＝在該 Jira 卡上把 <code>Flagged</code> 設成 <code>Impediment</code> 🚩。</div></div>
+</div></details>
+<details class="p" id="p-yurou"><summary><span class="nm">陳語柔</span><span class="ro">角色待確認（名單外）</span><span class="sm">1 張 · DEV DONE 1 · 停滯 26 工作天</span>
+<span class="bdg a">角色待確認</span>
+<span class="bdg r">停滯 26 工作天</span>
+</summary><div class="body">
+<div class="grp"><div class="t">🧩 已交出等驗收</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-299" target="_blank" rel="noopener">JOBHUB-299</a></b> [UI驗收] 應徵管理-正職 — DEV DONE，最後留言 07-01（來源：留言日期；08-12 早上快照以 changelog 判讀為 26 個工作天狀態未變）</li></ul></div>
+<div class="grp"><div class="t">⚠️ 風險</div><ul class="l"><li>07-01 留言明載「<b>本票仍僅完成 FR-APP-01/06 範疇，§1／§3／§4／§6-others 未做</b>」——狀態是 DEV DONE，實際交付並不完整。</li><li>唯一子任務 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-335" target="_blank" rel="noopener">JOBHUB-335</a>（RadioGroup／SelectableOptionCard 共用元件）未指派。</li><li><b>角色為推論</b>：由卡名「[UI驗收]」與子任務內容（共用元件、MAYO UI 2.0）推測為設計／UI 驗收，<b>需 PM 裁定</b>。</li></ul></div>
+<div class="sos"><div class="t">👉 該求救了</div>這張卡已停滯超過一個月且交付範圍與狀態不符。建議 PM 今天做一個決定：拆成「已完成的 FR-APP-01/06」與「未做的 §1/§3/§4」兩張，或直接退回待辦。<div class="faint" style="margin-top:6px">求救管道＝在該 Jira 卡上把 <code>Flagged</code> 設成 <code>Impediment</code> 🚩。</div></div>
+</div></details>
+<details class="p" id="p-none"><summary><span class="nm">未指派</span><span class="ro">無 owner</span><span class="sm">母卡 2 張 · 子任務 13 張 · 場外根阻塞 1 張</span>
+<span class="bdg r">🚩 場外 670 擋 5 張</span>
+<span class="bdg r">13 子任務無 owner</span>
+</summary><div class="body">
+<div class="grp"><div class="t">🚩 擋住了誰（issuelinks 真實登記）</div><ul class="l"><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-670" target="_blank" rel="noopener">JOBHUB-670</a>「[M4] P-01 prototype to code」→ 擋住 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-675" target="_blank" rel="noopener">JOBHUB-675</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-676" target="_blank" rel="noopener">JOBHUB-676</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-677" target="_blank" rel="noopener">JOBHUB-677</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-679" target="_blank" rel="noopener">JOBHUB-679</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-680" target="_blank" rel="noopener">JOBHUB-680</a>　<b>先指派這張，Goal ① 整條線才會動</b></li><li class="faint">670 為 P1、待辦、未指派，且 <code>customfield_10020=null</code>——<b>不屬於任何 Sprint，不會出現在任何人的看板上</b>。它不在本期 44 張卡內，本看板特別把它畫出來。</li></ul></div>
+<div class="grp"><div class="t">⬜ 本期未指派的母卡</div><ul class="l"><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-740" target="_blank" rel="noopener">JOBHUB-740</a></b> 下次上線需要請 SRE 協助的事項 — <b>今日新開</b>（Service Bus queue、Storage folder 與權限）<span class="tag">P4</span></li><li><b><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-420" target="_blank" rel="noopener">JOBHUB-420</a></b> 匯入精靈職缺選單：草稿可選與否（釐清）<span class="tag">P2</span></li></ul></div>
+<div class="grp"><div class="t">⬜ 13 張未指派的未完成子任務</div><ul class="l"><li><b>Goal ① 的 9 張 [FE]</b>：<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-688" target="_blank" rel="noopener">JOBHUB-688</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-689" target="_blank" rel="noopener">JOBHUB-689</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-691" target="_blank" rel="noopener">JOBHUB-691</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-692" target="_blank" rel="noopener">JOBHUB-692</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-694" target="_blank" rel="noopener">JOBHUB-694</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-698" target="_blank" rel="noopener">JOBHUB-698</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-699" target="_blank" rel="noopener">JOBHUB-699</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-701" target="_blank" rel="noopener">JOBHUB-701</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-702" target="_blank" rel="noopener">JOBHUB-702</a>（全 P1／P2 · 串測與 UI Review）</li><li><b>Goal ② 的 3 張</b>：<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-348" target="_blank" rel="noopener">JOBHUB-348</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-349" target="_blank" rel="noopener">JOBHUB-349</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-350" target="_blank" rel="noopener">JOBHUB-350</a>（UAT 壓測／送 PRD 申請單／PRD 壓測，連續第 7 天）</li><li><a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-335" target="_blank" rel="noopener">JOBHUB-335</a>（共用元件，掛 299 底下）</li></ul></div>
+<div class="grp"><div class="t">⚠️ 風險</div><ul class="l"><li><b>Goal ① 與 Goal ② 的跳票原因都在這一格。</b>不是工時不夠，是 15 個位置沒有名字。</li><li>740 今日新開卻已是 P4、未指派——上線相關的 SRE 事項若沒有 owner，8/13 不會有人送出。</li></ul></div>
+<div class="sos"><div class="t">👉 該求救了</div>這一格沒有人能求救，只有 PM 能指派。今天最小可行動作：給 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-670" target="_blank" rel="noopener">JOBHUB-670</a> 和 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-349" target="_blank" rel="noopener">JOBHUB-349</a> 各指派一個名字——這兩張分別解開 Goal ① 的 5 張與 Goal ② 的整條線。<div class="faint" style="margin-top:6px">求救管道＝在該 Jira 卡上把 <code>Flagged</code> 設成 <code>Impediment</code> 🚩。</div></div>
+</div></details>
+</div>
+<div class="card"><h2>D ｜ 怎麼求救 · 資料來源 · 誠實標示</h2>
+<p class="foot"><b>求救管道</b>：在被卡住的那張 Jira 卡上，把 <code>Flagged</code> 欄位設成 <code>Impediment</code> 🚩，並在留言 @ 需要做決定的人、寫明「需要什麼、什麼時候之前」。本期 <b>沒有任何一張卡使用過 Flagged</b>，因此所有阻塞都只存在於留言內文，Jira 報表上看不到。</p>
+<hr class="hair">
+<p class="foot"><b>資料時間</b>：2026-08-12 17:45 Asia/Taipei 讀取。查詢＝<code>project = JOBHUB AND sprint in openSprints()</code>（44 張母卡，單頁抓完無下一頁）＋其子任務 174 張＋Epic 清單（<code>hierarchyLevel = 1</code>）＋場外根阻塞 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-670" target="_blank" rel="noopener">JOBHUB-670</a>。</p>
+<hr class="hair">
+<table class="g"><tr><th style="width:22%">項目</th><th style="width:14%">性質</th><th>說明</th></tr>
+<tr><td><b>卡號、狀態、負責人、優先級、label、parent、issuelinks</b></td><td><b>真實 Jira 資料</b></td><td>2026-08-12 17:45 直接讀取，未經加工。</td></tr>
+<tr><td><b>Sprint 名稱／goal 全文／起訖日</b></td><td><b>真實 Jira 資料</b></td><td>來自 <code>customfield_10020</code>，state=active。</td></tr>
+<tr><td><b>週曆上的日期位置</b></td><td><span style="color:var(--red)">⚠️ 多為示意</span></td><td>母卡填寫「開始日期」者＝ 0 張。<b>只有 Lodifa Chen 那一列（真實截止日 8/12）與 Bill Wang 的逾期塊（子任務真實起訖日）使用真實日期</b>，其餘區塊的位置與寬度是為了呈現負載與相依而畫的示意值。真實狀態是 39 張母卡全在「未排期」欄。</td></tr>
+<tr><td><b>Goal ①②③④ 的卡片歸屬</b></td><td><span style="color:var(--amber)">推論</span></td><td>goal 欄位只有四個詞，歸屬由 label → parent Epic → 卡名關鍵詞逐層比對推導，判定依據已逐條列在 A 區。<b>每天重新推導，不沿用昨日結果</b>——本日已把 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-493" target="_blank" rel="noopener">JOBHUB-493</a> 從 Goal ② 移出（詳見 A 區）。最可能分錯：<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-497" target="_blank" rel="noopener">JOBHUB-497</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-357" target="_blank" rel="noopener">JOBHUB-357</a>。</td></tr>
+<tr><td><b>Heidi Tsai 擋住的 7 條線</b></td><td><span style="color:var(--amber)">推論</span></td><td>來源是各卡留言內文（「請 PM 裁示」「待拍板」「需 ADR」），<b>未登記在 issuelinks，也未使用 Flagged</b>。Jira 報表上她的 blocking 數是 0。</td></tr>
+<tr><td><b>Bill Wang / 未指派 擋住的線</b></td><td><b>真實登記</b></td><td>全部來自 <code>issuelinks</code> 的 Blocks 關係，非推論。</td></tr>
+<tr><td><b>③ 新手導覽的「前置 468」</b></td><td><span style="color:var(--amber)">推論</span></td><td>依據是 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-582" target="_blank" rel="noopener">JOBHUB-582</a> 的 07-30 留言（拆成三段交付、468 先出），非 issuelinks 登記。</td></tr>
+<tr><td><b>逾期天數</b></td><td><span style="color:var(--amber)">推算</span></td><td>以子任務真實截止日（8/6、8/7）扣除週末推算至 8/12，得 4／3 個工作天。</td></tr>
+<tr><td><b>停滯天數</b></td><td><span style="color:var(--amber)">推算 · 來源已標</span></td><td><b>刻意不使用 <code>updated</code> 欄位</b>——它會被任何欄位變動刷新（本期 08-06／08-07 的批次整理即把大量卡刷成同一天）。改用留言日期回推；<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-299" target="_blank" rel="noopener">JOBHUB-299</a> 的「26 個工作天」引自 08-12 早上快照的 changelog 判讀，本次未重跑 changelog。</td></tr>
+<tr><td><b>陳語柔的角色</b></td><td><span style="color:var(--amber)">推論 · 待 PM 裁定</span></td><td>名單外人員。由卡名「[UI驗收]」與子任務內容（共用元件、MAYO UI 2.0）推測為設計／UI 驗收。子任務層另有 <b>sam chong</b>（18 張，全數完成）與 <b>Daniel Shih</b>（6 張，1 張未完成）兩位名單外人員。</td></tr>
+<tr><td><b>估時／story point</b></td><td>—</td><td><code>customfield_10016</code>（story point）全期 <b>0 張</b>填寫。<code>timeoriginalestimate</code> 在本專案 issue type 未開啟，<b>未採用為指標</b>。</td></tr>
+<tr><td><b>本日快照</b></td><td><b>已存在，未重複新增</b></td><td>JOBHUB-452 今日 08:51 已有一則 <code>SNAPSHOT 2026-08-12</code>，依規則同日不重複新增。本看板的「本日變化」＝現況對照該則早上快照。</td></tr>
+</table>
+<hr class="hair">
+<p class="foot"><b>本日變化（對照今日 08:51 快照）</b>：母卡 43 → 44（新開 <a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-740" target="_blank" rel="noopener">JOBHUB-740</a>）；完成 4 → 4（<b>整個下午沒有任何一張卡完成</b>）；進行中 6 → 4；DEV DONE 3 → 6（<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-426" target="_blank" rel="noopener">JOBHUB-426</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-468" target="_blank" rel="noopener">JOBHUB-468</a>、<a href="https://mayohumancapital.atlassian.net/browse/JOBHUB-568" target="_blank" rel="noopener">JOBHUB-568</a> 轉入並同時轉派 Heidi Tsai）。完成率 9.3% → <b>9.1%</b>（分母增加，分子未動）。對照昨日 08-11：完成率 4.7% → 9.1%，一天半只多 2 張完成。</p>
+</div>
+<script>
+document.querySelectorAll('.calwrap a[href^="#p-"]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    e.preventDefault();
+    var el=document.querySelector(a.getAttribute('href'));
+    if(!el) return;
+    el.open=true;
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+});
+</script>
+</div></body></html>

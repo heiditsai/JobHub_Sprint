@@ -11,12 +11,65 @@ def span(a_, b_):
     return max(0, min(ai, 4)), max(0, min(bi, 4))
 
 
+# 卡片排序：進行中 → 還沒開始 → 交付中 → 已完成。
+# 需要有人動手的排最前面，已完成的沉到最後；同一階內仍照 key 遞增。
+ST_ORDER = {'doing': 0, 'todo': 1, 'testing': 2, 'devdone': 3, 'done': 4}
+
+
+def st_sort(keys):
+    """把一串 issue key 依開發狀態重排（回傳新 list，不改動輸入）。"""
+    def rank(k):
+        m = BY.get(k) or SBY.get(k)
+        return (ST_ORDER.get(m['st'], 9), k)
+    return sorted(keys, key=rank)
+
+
 def bars_of(k):
     m = BY.get(k) or SBY[k]; cl = CL.get(k); bc = baseline_class(k)
     ps, pe = d(m['pstart']), d(m['pend'])
     a0, a1 = (d(cl[0]), d(cl[2])) if cl else (None, None)
     if not a1 and a0: a1 = TODAY
-    return (span(ps, pe) if bc == "PLANNED" else None), span(a0, a1)
+    # 有完成事件但沒有開工紀錄 → 只在完成日畫一個點，不畫工期條
+    # （工期需要開工日，而開工日不存在——不拿完成日反推）
+    pt = span(a1, a1) if (a1 and not a0) else None
+    return (span(ps, pe) if bc == "PLANNED" else None), span(a0, a1), pt
+
+
+def date_cell(k, ds, de_):
+    """計畫起迄與實際起迄同欄兩列。
+
+    實際值來自 changelog（CL），計畫值來自 Jira 欄位；兩者都缺就標「未填」，
+    一律不互相推導。
+    """
+    cl = CL.get(k)
+    f = lambda x: x[5:].replace('-', '/') if x and x != '—' else '—'
+    plan = ('%s → %s' % (ds or '—', de_ or '—')) if has_dates(k) \
+           else '<b class="nofill">未填</b>'
+    actual = ('%s → %s' % (f(cl[0]), f(cl[2]))) if cl else '<span class="faint">無紀錄</span>'
+    qual = '未經 In Progress' if k in NO_INPROGRESS else ''
+    _ae = d(cl[2]) if (cl and cl[2] and cl[2] != '—') else None
+    if _ae and _ae < SPRINT['start']:
+        # 時間軸只涵蓋本期五天，完成日在本期之前的卡條與點都畫不出來；
+        # 標一句，才不會跟「完全沒紀錄」看起來一樣。
+        qual = (qual + ' · ' if qual else '') + '本期之前完成'
+    return ('<div class="c-date%s">'
+            '<div class="dl"><span class="dk">預計</span><span class="dv mono">%s</span></div>'
+            '<div class="dl"><span class="dk">實際</span><span class="dv mono">%s</span></div>'
+            '%s</div>'
+            % ('' if has_dates(k) else ' none', plan, actual,
+               ('<div class="dq">%s</div>' % qual) if qual else ''))
+
+
+def risk_cell(k, tags, risk):
+    """風險說明獨立一欄：dev_of 的訊號標籤 ＋ plan_risk 對計畫日的說明。
+
+    兩者都是既有判定，這裡只換位置，不新增任何 signal。
+    """
+    if not tags and not risk:
+        return '<div class="c-risk"><span class="none">—</span></div>'
+    return ('<div class="c-risk">%s%s</div>'
+            % (('<div class="rt">%s</div>' % ' '.join(tags)) if tags else '',
+               ('<span class="why">⚑ %s</span>' % esc(risk)) if risk else ''))
 
 
 def card_row(k, kind, gid=None):
@@ -27,46 +80,37 @@ def card_row(k, kind, gid=None):
     m = BY.get(k) or SBY[k]
     is_sub = (kind == 'sub')
     tags, _ = dev_of(k)
-    sp, sa = bars_of(k)
+    sp, sa, spt = bars_of(k)
     late = any('tag bad' in t for t in tags)
     badge = ('<span class="tag plan">%s</span>' % gid) if kind == 'goal' else \
             ('<span class="tag">OTHER</span>' if kind == 'other' else '<span class="tag">子卡</span>')
     risk = plan_risk(k)
     ds = (m['pstart'] or '')[5:].replace('-', '/')
     de_ = (m['pend'] or '')[5:].replace('-', '/')
-    cl = CL.get(k)
-    act = ''
-    if cl:
-        f = lambda x: x[5:].replace('-', '/') if x and x != '—' else '—'
-        act = '<span class="mono faint">實 %s→%s</span>' % (f(cl[0]), f(cl[2]))
-        if k in NO_INPROGRESS:
-            act += '<span class="faint">（未經 In Progress）</span>'
     why = ('<div class="faint" style="font-size:11px;margin-top:3px">📌 %s</div>'
            % esc(KEY_SUBS[k]['why'])) if is_sub and k in KEY_SUBS else ''
-    A('<div class="erow%s">' % (' subr' if is_sub else ''))
-    A('<div class="c-work">%s%s %s <span class="wt">%s</span>%s'
-      '%s%s</div>'
+    A('<div class="erow%s%s">' % (' subr' if is_sub else '',
+                                  ' isdone' if m['st'] == 'done' else ''))
+    A('<div class="c-work">%s<div class="wkey">%s %s</div>'
+      '<div class="wt">%s</div>%s</div>'
       % ('<span class="sarr">↳</span>' if is_sub else '',
-         badge, L(k), esc(m['sum']), why,
-         ('<div class="wmeta">%s</div>' % act) if act else '',
-         ('<div class="wrisk">%s</div>' % ' '.join(tags)) if tags else ''))
+         badge, L(k), esc(m['sum']), why))
+    A(date_cell(k, ds, de_))
+    A(risk_cell(k, tags, risk))
     # 開發狀態：獨立欄。子卡另外標承接人——未指派是子卡層才看得到的事實
-    A('<div class="c-dev">%s%s</div>'
-      % (stat(k),
+    A('<div class="c-dev"><span class="sc %s">%s %s</span>%s</div>'
+      % (m['st'], ICON[m['st']], STL[m['st']],
          ('<span class="devwho%s">%s</span>'
           % ('' if m['who'] != '未指派' else ' none', esc(m['who']))) if is_sub else ''))
-    A('<div class="c-date%s">%s%s</div>'
-      % ('' if has_dates(k) else ' none',
-         ('%s → %s' % (ds or '—', de_ or '—')) if has_dates(k) else '未填起迄日',
-         ('<span class="why">⚑ %s</span>' % esc(risk)) if risk else ''))
     for i, (dt, _, _) in enumerate(DAYS):
-        A('<div class="cell%s" style="grid-column:%d"></div>' % (' td' if dt == TODAY else '', i + 4))
+        A('<div class="cell%s" style="grid-column:%d"></div>' % (' td' if dt == TODAY else '', i + 5))
     A('<div class="lane">')
     if sp: A('<div class="bar p" style="grid-column:%d/%d"></div>' % (sp[0] + 1, sp[1] + 2))
     if sa: A('<div class="bar a%s" style="grid-column:%d/%d"></div>' % (' late' if late else '', sa[0] + 1, sa[1] + 2))
+    if spt: A('<div class="bar a pt" style="grid-column:%d/%d"></div>' % (spt[0] + 1, spt[1] + 2))
     A('</div></div>')
     # 子卡 roll-up —— 展開後每張子卡是一列 .erow，與母卡共用同一條 timeline
-    kids = sorted(SUB.get(k, []), key=lambda y: y['key'])
+    kids = [SBY[_kk] for _kk in st_sort([y['key'] for y in SUB.get(k, [])])]
     if kids:
         kd = sum(1 for x in kids if x['st'] == 'done')
         whoc = collections.Counter(x['who'] for x in kids)
@@ -103,12 +147,13 @@ A('<div class="banner" style="border-left-color:var(--amb);margin:0 0 12px">'
 
 A('<div class="card"><div class="scroll escroll"><div class="egrid">')
 # 欄位表頭
-A('<div class="erow hdr"><div class="c-work">WORK · SIGNAL</div>'
-  '<div class="c-dev">開發狀態</div>'
-  '<div class="c-date">計畫起迄日<span class="why" style="color:var(--tx3);font-weight:600">'
-  '⚑ ＝ 這個日期有問題</span></div>%s</div>'
+A('<div class="erow hdr"><div class="c-work">WORK</div>'
+  '<div class="c-date">計畫／實際起迄</div>'
+  '<div class="c-risk">風險說明<span class="why" style="color:var(--tx3);font-weight:600">'
+  '⚑ ＝ 這個日期有問題</span></div>'
+  '<div class="c-dev">開發狀態</div>%s</div>'
   % ''.join('<div class="c-day%s" style="grid-column:%d">%s（%s）%s</div>'
-            % (' td' if dt == TODAY else '', i + 4, lab, w,
+            % (' td' if dt == TODAY else '', i + 5, lab, w,
                '<br>TODAY' if dt == TODAY else ('<br>15:00 收期' if dt == SPRINT['end'] else ''))
             for i, (dt, lab, w) in enumerate(DAYS)))
 

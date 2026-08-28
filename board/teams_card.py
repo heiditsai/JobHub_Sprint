@@ -17,7 +17,7 @@ from paths import evidence_path, lifecycle_path            # noqa: E402
 from sig_labels import sig_label                           # noqa: E402
 
 JIRA = 'https://mayohumancapital.atlassian.net/browse/'
-BOARD_URL = 'https://mayohumancapital.atlassian.net/jira/software/c/projects/JOBHUB/boards/1726'
+BOARD_URL = 'https://mayohumancapital.atlassian.net/jira/software/projects/JOBHUB/boards/1726'
 SNAPSHOT_URL = JIRA + 'JOBHUB-452'
 
 STATE_LABEL = {

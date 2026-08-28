@@ -21,6 +21,16 @@ EVIDENCE_PATH = _evidence_path()
 with open(EVIDENCE_PATH, encoding='utf-8') as _f:
     EV = json.load(_f)
 
+# 原始資料的抓取時刻。頁首原本寫死成 "2026-08-27 16:05"，
+# 改成讀 raw 檔的 fetched_at —— 抓不到就是 None，由呈現端說「不明」，不猜。
+FETCHED_AT = None
+try:
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                           'evidence', 'raw', 'issues_parent.json'), encoding='utf-8') as _rf:
+        FETCHED_AT = json.load(_rf).get('fetched_at')
+except Exception:
+    pass
+
 _A = EV['layerA']['issues']
 _B = EV['layerB']['derived']
 _R = EV['layerB']['rollups']

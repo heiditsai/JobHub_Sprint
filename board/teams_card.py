@@ -16,9 +16,21 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'evi
 from paths import evidence_path, lifecycle_path            # noqa: E402
 from sig_labels import sig_label                           # noqa: E402
 
-JIRA = 'https://mayohumancapital.atlassian.net/browse/'
-BOARD_URL = 'https://mayohumancapital.atlassian.net/jira/software/projects/JOBHUB/boards/1726'
-SNAPSHOT_URL = JIRA + 'JOBHUB-452'
+SITE = 'https://mayohumancapital.atlassian.net'
+JIRA = SITE + '/browse/'
+SNAPSHOT_URL = JIRA + 'JOBHUB-452'      # 快照存放卡，固定不變
+
+
+def board_url(sprint):
+    """Jira 看板網址由 sprint 自己的 boardId 推出來，不寫死。
+
+    JOBHUB 是 team-managed（next-gen）專案，路徑**沒有** /c/ 這一段；
+    company-managed 才有。boardId 拿不到時回專案首頁，不要給一個壞連結。
+    """
+    bid = (sprint or {}).get('boardId')
+    if not bid:
+        return SITE + '/jira/software/projects/JOBHUB/boards'
+    return SITE + '/jira/software/projects/JOBHUB/boards/%s' % bid
 
 STATE_LABEL = {
     'NORMAL_EXECUTION': '執行中',
@@ -206,7 +218,8 @@ def build(ev, lc, html_name=None):
     card = {'type': 'AdaptiveCard', 'version': '1.2', 'msTeams': {'width': 'full'},
             'body': body,
             'actions': [
-                {'type': 'Action.OpenUrl', 'title': 'Jira Sprint 看板', 'url': BOARD_URL},
+                {'type': 'Action.OpenUrl', 'title': 'Jira Sprint 看板',
+                 'url': board_url(ev['layerA'].get('sprint'))},
                 {'type': 'Action.OpenUrl', 'title': '每日快照 JOBHUB-452', 'url': SNAPSHOT_URL},
             ]}
     if html_name:

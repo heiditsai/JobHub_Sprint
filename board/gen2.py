@@ -1,7 +1,19 @@
 # -*- coding: utf-8 -*-
-import html, collections
+import html, collections, os, sys
 from datetime import date, timedelta
 exec(open('data3.py',encoding='utf-8').read())
+
+# 輸出檔名不寫死：比照 evidence/paths.py 的慣例（環境變數優先，其次由資料推導）
+#   1. 命令列第一個參數
+#   2. 環境變數 BOARD_OUT
+#   3. jobhub-sprint-execution-<evidence as_of>.html
+def out_path():
+    if len(sys.argv) > 1 and sys.argv[1]:
+        return sys.argv[1]
+    env = os.environ.get('BOARD_OUT')
+    if env:
+        return env
+    return 'jobhub-sprint-execution-%s.html' % TODAY.isoformat()
 
 BASE="https://mayohumancapital.atlassian.net/browse/"
 def esc(s): return html.escape(str(s))
@@ -162,14 +174,20 @@ details[open]>.subsum{color:var(--tx);font-weight:600;border-bottom:0}
 .lcrow .lcsig{display:flex;gap:4px;flex-wrap:wrap}
 
 /* execution grid */
-.egrid{min-width:1580px}
-.erow{display:grid;grid-template-columns:560px 214px repeat(5,1fr);min-width:1580px;
+.egrid{min-width:1598px}
+.erow{display:grid;grid-template-columns:460px 118px 214px repeat(5,1fr);min-width:1598px;
  border-bottom:1px solid var(--line)}
 .c-work{grid-column:1;grid-row:1;padding:9px 12px;font-size:12.5px;line-height:1.5}
 .c-work .wt{color:var(--tx)}
 .c-work .wmeta{color:var(--tx2);font-size:11.5px;margin-top:3px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .c-work .wrisk{margin-top:5px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-.c-date{grid-column:2;grid-row:1;padding:9px 8px;font-size:11px;text-align:center;
+/* 開發狀態：獨立一欄，不再擠在 WORK 欄的 meta 行裡 */
+.c-dev{grid-column:2;grid-row:1;padding:9px 8px;font-size:12px;line-height:1.5;
+ border-left:1px solid var(--line)}
+.c-dev .st{white-space:normal}
+.c-dev .devwho{display:block;margin-top:3px;font-size:11px;color:var(--tx3)}
+.c-dev .devwho.none{color:var(--red);font-weight:700}
+.c-date{grid-column:3;grid-row:1;padding:9px 8px;font-size:11px;text-align:center;
  border-left:1px solid var(--line);border-right:2px solid var(--line);
  font-variant-numeric:tabular-nums}
 .c-date.none{color:var(--amb);font-weight:600;
@@ -187,7 +205,7 @@ details[open]>.subsum{color:var(--tx);font-weight:600;border-bottom:0}
 @media(min-width:1660px){.escroll{overflow:visible}}
 .egrid .cell{border-left:1px solid var(--line);grid-row:1}
 .egrid .cell.td{background:rgba(42,111,214,.055)}
-.egrid .lane{grid-column:3/-1;grid-row:1;display:grid;grid-template-columns:repeat(5,1fr);
+.egrid .lane{grid-column:4/-1;grid-row:1;display:grid;grid-template-columns:repeat(5,1fr);
  grid-template-rows:9px 9px;gap:5px 3px;padding:10px 0;align-content:center}
 .egrid .lane .bar.p{grid-row:1}
 .egrid .lane .bar.a{grid-row:2}
@@ -209,7 +227,18 @@ details[open]>.subsum{color:var(--tx);font-weight:600;border-bottom:0}
 .gline.dep{color:var(--amb);font-size:11.5px;padding-left:34px;margin-top:2px}
 .divhd{padding:11px 14px;background:var(--bg);font-size:12.5px;font-weight:600}
 .divhd .dvn{display:block;font-weight:400;font-size:11.5px;color:var(--tx2);margin-top:3px}
-.full.sub{padding:0 14px 4px}
+/* 子卡：走母卡同一條 timeline —— 巢狀 .erow 沿用同一組 grid-template-columns，
+   欄位左右對齊母卡，日期格與 lane 落在同樣的五天上 */
+.full.sub{padding:0}
+.subwrap{background:var(--bg);border-top:1px solid var(--line)}
+.erow.subr{border-bottom:1px solid var(--line);background:var(--bg)}
+.erow.subr:last-child{border-bottom:0}
+.erow.subr .c-work{padding-left:32px;font-size:12px;position:relative}
+.erow.subr .c-work .sarr{position:absolute;left:14px;top:9px;color:var(--tx3)}
+.erow.subr .c-dev,.erow.subr .c-date{font-size:11px}
+.erow.subr .lane{padding:7px 0}
+.erow.subr .bar{height:7px}
+.subsum .sn{margin-left:6px;color:var(--tx3);font-size:11.5px}
 /* risk */
 .risk{border:1px solid var(--bd);border-left:3px solid var(--amb);border-radius:6px;padding:12px 15px;margin:9px 0;background:var(--card)}
 .risk.hi{border-left-color:var(--red)}
@@ -599,5 +628,10 @@ A('<div class="foot">'
   '目前全期 0 張設過，所以上面每一條「在等什麼」都是判讀出來的。'
   '</div>')
 A('</div>')
-open('jobhub-sprint-execution-2026-08-27.html','w',encoding='utf-8').write('\n'.join(O))
-print("written",len('\n'.join(O)))
+OUT = out_path()
+_html = '\n'.join(O)
+_dir = os.path.dirname(os.path.abspath(OUT))
+if _dir:
+    os.makedirs(_dir, exist_ok=True)
+open(OUT,'w',encoding='utf-8').write(_html)
+print("written", OUT, len(_html))

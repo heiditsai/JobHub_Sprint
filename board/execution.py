@@ -20,8 +20,12 @@ def bars_of(k):
 
 
 def card_row(k, kind, gid=None):
-    """一張卡一列：狀態、偏差、計畫起迄、日期風險、plan/actual 條"""
+    """一張卡一列：開發狀態（獨立欄）、偏差、計畫起迄、日期風險、plan/actual 條
+
+    kind='sub' 走同一條 timeline —— 只差視覺縮排，欄位與日期格完全對齊母卡。
+    """
     m = BY.get(k) or SBY[k]
+    is_sub = (kind == 'sub')
     tags, _ = dev_of(k)
     sp, sa = bars_of(k)
     late = any('tag bad' in t for t in tags)
@@ -34,25 +38,34 @@ def card_row(k, kind, gid=None):
     act = ''
     if cl:
         f = lambda x: x[5:].replace('-', '/') if x and x != '—' else '—'
-        act = '<span class="mono faint"> · 實 %s→%s</span>' % (f(cl[0]), f(cl[2]))
+        act = '<span class="mono faint">實 %s→%s</span>' % (f(cl[0]), f(cl[2]))
         if k in NO_INPROGRESS:
             act += '<span class="faint">（未經 In Progress）</span>'
-    A('<div class="erow">')
-    A('<div class="c-work">%s %s <span class="wt">%s</span>'
-      '<div class="wmeta">%s%s</div>%s</div>'
-      % (badge, L(k), esc(m['sum']), stat(k), act,
+    why = ('<div class="faint" style="font-size:11px;margin-top:3px">📌 %s</div>'
+           % esc(KEY_SUBS[k]['why'])) if is_sub and k in KEY_SUBS else ''
+    A('<div class="erow%s">' % (' subr' if is_sub else ''))
+    A('<div class="c-work">%s%s %s <span class="wt">%s</span>%s'
+      '%s%s</div>'
+      % ('<span class="sarr">↳</span>' if is_sub else '',
+         badge, L(k), esc(m['sum']), why,
+         ('<div class="wmeta">%s</div>' % act) if act else '',
          ('<div class="wrisk">%s</div>' % ' '.join(tags)) if tags else ''))
+    # 開發狀態：獨立欄。子卡另外標承接人——未指派是子卡層才看得到的事實
+    A('<div class="c-dev">%s%s</div>'
+      % (stat(k),
+         ('<span class="devwho%s">%s</span>'
+          % ('' if m['who'] != '未指派' else ' none', esc(m['who']))) if is_sub else ''))
     A('<div class="c-date%s">%s%s</div>'
       % ('' if has_dates(k) else ' none',
          ('%s → %s' % (ds or '—', de_ or '—')) if has_dates(k) else '未填起迄日',
          ('<span class="why">⚑ %s</span>' % esc(risk)) if risk else ''))
     for i, (dt, _, _) in enumerate(DAYS):
-        A('<div class="cell%s" style="grid-column:%d"></div>' % (' td' if dt == TODAY else '', i + 3))
+        A('<div class="cell%s" style="grid-column:%d"></div>' % (' td' if dt == TODAY else '', i + 4))
     A('<div class="lane">')
     if sp: A('<div class="bar p" style="grid-column:%d/%d"></div>' % (sp[0] + 1, sp[1] + 2))
     if sa: A('<div class="bar a%s" style="grid-column:%d/%d"></div>' % (' late' if late else '', sa[0] + 1, sa[1] + 2))
     A('</div></div>')
-    # 子卡 roll-up
+    # 子卡 roll-up —— 展開後每張子卡是一列 .erow，與母卡共用同一條 timeline
     kids = sorted(SUB.get(k, []), key=lambda y: y['key'])
     if kids:
         kd = sum(1 for x in kids if x['st'] == 'done')
@@ -62,20 +75,15 @@ def card_row(k, kind, gid=None):
         if whoc.get('未指派'): warn += ' <span class="tag bad">%d 張無人承接</span>' % whoc['未指派']
         dv = sum(1 for x in kids if x['st'] == 'devdone')
         if dv: warn += ' <span class="tag warn">%d 張停在 DEV DONE</span>' % dv
+        nod = sum(1 for x in kids if not has_dates(x['key']))
+        if nod: warn += ' <span class="tag warn">%d 張沒壓起迄日</span>' % nod
         A('<div class="erow"><div class="full sub"><details><summary class="subsum">'
-          '↳ 子卡 <b>%d／%d</b> 完成　<span class="faint">%s</span>%s</summary>'
-          '<div class="scroll"><table class="subtbl">%s</table></div></details></div></div>'
-          % (kd, len(kids), whos, warn,
-             ''.join('<tr><td style="width:104px">%s</td><td>%s%s</td>'
-                     '<td style="width:110px">%s</td><td style="width:126px" class="dim">%s</td></tr>'
-                     % (L(x['key']), esc(x['sum']),
-                        (('<br><span class="faint" style="font-size:11px">📌 %s</span>'
-                          % esc(KEY_SUBS[x['key']]['why'])) if x['key'] in KEY_SUBS else '')
-                        + (('<div class="wrisk">%s</div>' % ' '.join(dev_of(x['key'])[0]))
-                           if dev_of(x['key'])[0] else ''),
-                        stat(x['key']),
-                        esc(x['who']) if x['who'] != '未指派' else '<b style="color:var(--red)">未指派</b>')
-                     for x in kids)))
+          '↳ 子卡 <b>%d／%d</b> 完成　<span class="faint">%s</span>%s'
+          '<span class="sn">展開後與母卡同一條時間軸</span></summary>'
+          '<div class="subwrap">' % (kd, len(kids), whos, warn))
+        for x in kids:
+            card_row(x['key'], 'sub')
+        A('</div></details></div></div>')
 
 
 A('<div class="sec"><div class="sech"><span class="n">02</span>'
@@ -87,18 +95,20 @@ A('<div class="banner" style="border-left-color:var(--amb);margin:0 0 12px">'
   '<div class="t">⚑ 35 張卡裡有 <b>%d 張沒壓起迄日</b>（%.0f%%），它們永遠不會在 Jira 上逾期</div>'
   '<div class="b">沒有 <code>Start date</code>／<code>duedate</code> 的卡排不進時間軸，也不會觸發任何逾期判定。'
   '分布：%s。<br>下表是<b>每個 participant 的完整清單</b>——Goal Work、Other Sprint Work 一張卡一行，不省略；'
-  '子卡收在母卡底下可展開。</div></div>'
+  '子卡收在母卡底下可展開，<b>展開後與母卡走同一條時間軸</b>——子卡自己的計畫線與實際線'
+  '直接畫在同樣的五天上，不再只是一張沒有時間的清單。</div></div>'
   % (len(nodate_all), len(nodate_all) / len(M) * 100,
      ' · '.join('%s <b>%d</b>' % (w, c) for w, c in
                 sorted(collections.Counter(m['who'] for m in nodate_all).items(), key=lambda x: -x[1]))))
 
 A('<div class="card"><div class="scroll escroll"><div class="egrid">')
 # 欄位表頭
-A('<div class="erow hdr"><div class="c-work">WORK · STATUS · SIGNAL</div>'
+A('<div class="erow hdr"><div class="c-work">WORK · SIGNAL</div>'
+  '<div class="c-dev">開發狀態</div>'
   '<div class="c-date">計畫起迄日<span class="why" style="color:var(--tx3);font-weight:600">'
   '⚑ ＝ 這個日期有問題</span></div>%s</div>'
   % ''.join('<div class="c-day%s" style="grid-column:%d">%s（%s）%s</div>'
-            % (' td' if dt == TODAY else '', i + 3, lab, w,
+            % (' td' if dt == TODAY else '', i + 4, lab, w,
                '<br>TODAY' if dt == TODAY else ('<br>15:00 收期' if dt == SPRINT['end'] else ''))
             for i, (dt, lab, w) in enumerate(DAYS)))
 

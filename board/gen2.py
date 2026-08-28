@@ -174,25 +174,53 @@ details[open]>.subsum{color:var(--tx);font-weight:600;border-bottom:0}
 .lcrow .lcsig{display:flex;gap:4px;flex-wrap:wrap}
 
 /* execution grid */
-.egrid{min-width:1598px}
-.erow{display:grid;grid-template-columns:460px 118px 214px repeat(5,1fr);min-width:1598px;
+.egrid{min-width:1610px}
+.erow{display:grid;grid-template-columns:420px 260px 300px 100px repeat(5,106px);min-width:1610px;
  border-bottom:1px solid var(--line)}
 .c-work{grid-column:1;grid-row:1;padding:9px 12px;font-size:12.5px;line-height:1.5}
-.c-work .wt{color:var(--tx)}
+.c-work .wkey{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.c-work .wt{color:var(--tx);display:block;margin-top:2px;line-height:1.45}
 .c-work .wmeta{color:var(--tx2);font-size:11.5px;margin-top:3px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .c-work .wrisk{margin-top:5px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 /* 開發狀態：獨立一欄，不再擠在 WORK 欄的 meta 行裡 */
-.c-dev{grid-column:2;grid-row:1;padding:9px 8px;font-size:12px;line-height:1.5;
+.c-dev{grid-column:4;grid-row:1;padding:9px 8px;font-size:12px;line-height:1.5;
  border-left:1px solid var(--line)}
 .c-dev .st{white-space:normal}
 .c-dev .devwho{display:block;margin-top:3px;font-size:11px;color:var(--tx3)}
 .c-dev .devwho.none{color:var(--red);font-weight:700}
-.c-date{grid-column:3;grid-row:1;padding:9px 8px;font-size:11px;text-align:center;
+.c-date{grid-column:2;grid-row:1;padding:8px 10px;font-size:11px;text-align:left;
  border-left:1px solid var(--line);border-right:2px solid var(--line);
  font-variant-numeric:tabular-nums}
 .c-date.none{color:var(--amb);font-weight:600;
  background:repeating-linear-gradient(135deg,transparent,transparent 6px,var(--line) 6px,var(--line) 7px)}
 .c-date .why{display:block;margin-top:3px;font-size:10px;line-height:1.4;color:var(--amb);font-weight:600}
+/* 計畫起迄與實際起迄同欄兩列 */
+.c-date .dl{display:flex;gap:6px;align-items:baseline;line-height:1.65}
+.c-date .dk{flex:none;width:24px;color:var(--tx3);font-size:10px}
+.c-date .dv{color:var(--tx2)}
+.c-date .nofill{color:var(--amb);font-weight:600}
+.c-date .dq{margin-top:2px;font-size:10px;color:var(--tx3);line-height:1.4}
+/* 風險說明自成一欄：訊號標籤與「這個日期為什麼有問題」都收在這裡 */
+.c-risk{grid-column:3;grid-row:1;padding:8px 10px;font-size:11px;line-height:1.5;
+ border-right:1px solid var(--line)}
+.c-risk .rt{display:flex;flex-wrap:wrap;gap:4px}
+.c-risk .rt .tag{white-space:normal;line-height:1.45}
+.c-risk .why{display:block;margin-top:4px;font-size:10px;line-height:1.45;color:var(--amb);font-weight:600}
+.c-risk .none{color:var(--tx3)}
+/* 開發狀態晶片：關注點放在「還沒開始」與「進行中」 */
+.c-dev .sc{display:inline-block;padding:2px 8px;border-radius:10px;font-weight:600;
+ white-space:nowrap;border:1px solid transparent;font-size:11.5px}
+.c-dev .sc.todo{color:var(--red);border-color:var(--red);background:var(--bad)}
+.c-dev .sc.doing{color:#fff;background:var(--blue);border-color:var(--blue)}
+.c-dev .sc.testing,.c-dev .sc.devdone{color:var(--amb);border-color:var(--amb);background:var(--warn)}
+.c-dev .sc.done{color:var(--tx3);border-color:var(--line);background:transparent;font-weight:400}
+/* 已完成的列整列退到背景，視線留給未開始與進行中 */
+.egrid .erow.isdone,.egrid .erow.subr.isdone{background:var(--track)}
+.egrid .erow.isdone .c-work,.egrid .erow.isdone .c-work .wt,
+.egrid .erow.isdone .c-date,.egrid .erow.isdone .c-risk{color:var(--tx3)}
+/* 完成點：有完成事件、沒有開工紀錄 —— 只標完成日，不畫工期 */
+.egrid .lane .bar.a.pt{grid-row:2;width:9px;justify-self:center;border-radius:50%;
+ background:var(--card);border:2px solid var(--blue)}
 .c-day{grid-row:1;padding:7px 8px;font-size:11px;color:var(--tx3);border-left:1px solid var(--line)}
 .c-day.td{color:var(--blue);font-weight:600}
 .erow.hdr>div{font-size:11px;letter-spacing:.05em;color:var(--tx3);font-weight:600;
@@ -205,7 +233,7 @@ details[open]>.subsum{color:var(--tx);font-weight:600;border-bottom:0}
 @media(min-width:1660px){.escroll{overflow:visible}}
 .egrid .cell{border-left:1px solid var(--line);grid-row:1}
 .egrid .cell.td{background:rgba(42,111,214,.055)}
-.egrid .lane{grid-column:4/-1;grid-row:1;display:grid;grid-template-columns:repeat(5,1fr);
+.egrid .lane{grid-column:5/-1;grid-row:1;display:grid;grid-template-columns:repeat(5,1fr);
  grid-template-rows:9px 9px;gap:5px 3px;padding:10px 0;align-content:center}
 .egrid .lane .bar.p{grid-row:1}
 .egrid .lane .bar.a{grid-row:2}
@@ -366,11 +394,29 @@ A('<style>%s</style>'%CSS)
 A('<div class="w">')
 
 # ── header ──
+# 頁首全部由資料算出來。原本 SPRINT 14／日期區間／週四／Day 4 of 5／資料時刻
+# 都是寫死的字串常數，換一天跑就會說謊。
+_sprint_no = ''.join(c for c in SPRINT['name'] if c.isdigit()) or SPRINT['name']
+_MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+def _md(x): return '%s %d'%(_MON[x.month-1], x.day)
+_dayidx = next((i for i,(dt,_,_) in enumerate(DAYS) if dt == TODAY), None)
+if _dayidx is not None:
+    _today_chip = 'Today · 週%s · Day %d / %d'%(
+        '一二三四五六日'[TODAY.weekday()], _dayidx+1, len(DAYS))
+    _chip_cls = 'chip now'
+else:
+    # 今天不在 Sprint 的工作日內（週末、或收期後）——照實說，不硬湊 Day N
+    _today_chip = '%s（週%s）· 不在本期工作日內'%(
+        TODAY.strftime('%m/%d'), '一二三四五六日'[TODAY.weekday()])
+    _chip_cls = 'chip'
+_fetched = (FETCHED_AT[:16].replace('T',' ') if FETCHED_AT else '時刻不明')
 A('<div class="top"><h1>JobHub Sprint 執行看板</h1>'
-  '<span class="chip">SPRINT 14</span><span class="chip">Aug 24 – Aug 28 15:00</span>'
-  '<span class="chip now">Today · 週四 · Day 4 / 5</span>'
+  '<span class="chip">SPRINT %s</span><span class="chip">%s – %s %s</span>'
+  '<span class="%s">%s</span>'
   '<span class="chip">%d issues in sprint</span>'
-  '<span style="margin-left:auto" class="faint">資料 2026-08-27 16:05 · Jira changelog + fields</span></div>'%len(M))
+  '<span style="margin-left:auto" class="faint">資料 %s · Jira changelog + fields</span></div>'
+  % (_sprint_no, _md(SPRINT['start']), _md(SPRINT['end']), SPRINT['endTime'],
+     _chip_cls, _today_chip, len(M), _fetched))
 
 # ── SECTION 1 ──
 A('<div class="sec"><div class="sech"><span class="n">01</span><h2>SPRINT OVERVIEW</h2>'

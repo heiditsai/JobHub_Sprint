@@ -35,6 +35,28 @@ TAKEN_LABEL = {
 }
 
 
+# 訊號 enum → 中文短標。卡片列已經是中文句子，這裡原本直接印 enum
+# （OVERSIZED_PLANNED_DURATION 這種），同一件事在同一張看板上有兩種寫法。
+SIG_LABEL = {
+    'OVERDUE': '已逾期',
+    'DUE_DATE_PASSED': '截止日已過',
+    'DUE_TODAY': '今天到期',
+    'DUE_TOMORROW': '明天到期',
+    'DUE_IN_2_WORKING_DAYS': '剩 2 個工作天',
+    'OVERSIZED_PLANNED_DURATION': '計畫工期過長·建議拆卡',
+    'STARTED_LATE': '開工晚於計畫',
+    'START_DELAY': '計畫開工日已過·尚未開工',
+    'PLAN_EXTENDS_BEYOND_SPRINT': '計畫跨出本期',
+    'STUCK_IN_DELIVERY_COMPLETE': '卡在 DEV DONE',
+    'MISSING_ACTUAL_START_HISTORY': '有完成無開工紀錄',
+}
+
+
+def sig_label(s):
+    """認得就給中文，不認得就照實印 enum——不要靜靜吞掉沒見過的訊號。"""
+    return SIG_LABEL.get(s, s)
+
+
 def _openlist(sc, limit=8):
     rows = sc['open_items'][:limit]
     more = len(sc['open_items']) - len(rows)
@@ -43,7 +65,7 @@ def _openlist(sc, limit=8):
         '<span class="lcs">%s</span><span class="lcw">%s</span>'
         '<span class="lcsig">%s</span></div>'
         % (L(r['key']), esc(r['status']), esc(r['assignee'] or '未指派'),
-           ''.join('<span class="tag warn">%s</span>' % s for s in r['signals'][:3]))
+           ''.join('<span class="tag warn">%s</span>' % esc(sig_label(s)) for s in r['signals'][:3]))
         for r in rows)
     if more > 0:
         out += '<div class="lcrow faint">…另有 %d 張未收</div>' % more

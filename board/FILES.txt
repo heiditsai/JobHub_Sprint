@@ -17,3 +17,5 @@ gen2.py
 execution.py
 contract.py
 lifecycle_section.py
+sig_labels.py
+teams_card.py

@@ -202,6 +202,8 @@ OUTSIDE_TEAM_GOAL = [g['gid'] for g in _D['goals'] if g.get('non_team_goal_align
 PARTICIPANTS = _D['participants']
 NONPART = _D['non_participants']
 GOAL_WORK = {k for g in GOALS for k in g['work']}
+GOAL_MAP_SOURCE = _D.get('goal_work_map_source') or 'NONE'
+GOAL_MAP_NOTE = (_D.get('goal_work_map_note') or '')
 
 # ── 仍為人工撰寫的部分（Layer C 註解，evidence 推導不出來）──────────────
 KEY_SUBS = {

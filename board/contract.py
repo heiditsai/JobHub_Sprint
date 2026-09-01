@@ -4,6 +4,40 @@ nod_all = [m for m in M if not m['pstart'] and not m['pend']]
 skip_all = sorted(NO_INPROGRESS)
 dd_all = [m for m in M if m['st'] == 'devdone']
 
+# 相依邊要**算**，不能寫死。只算兩端都在本期的邊。
+_edges_all = (EV.get('layerB', {}).get('dependencies') or {}).get('edges') or []
+_edges_in = [e for e in _edges_all if e.get('both_in_sprint')]
+_edges_blocking = [e for e in _edges_in if e.get('blocking')]
+if _edges_in:
+    DEP_CHIP = ("<span class='tag warn'>目前：期內 %d 條相依邊，其中 %d 條 blocking</span>"
+                % (len(_edges_in), len(_edges_blocking)))
+else:
+    DEP_CHIP = "<span class='tag bad'>目前：期內 0 條相依邊</span>"
+
+# Flagged / story point 不在抓取欄位裡，所以看板**沒有量過**它們。
+# 「全期 0 張」是沒量過就宣稱結果，不可以寫。
+NOT_FETCHED_CHIP = "<span class='tag bad'>目前：此欄位未納入抓取，無法判定</span>"
+
+# 計畫日期是不是 Sprint 開始後才補的 —— 用 evidence 的 baseline 分類，不要寫死。
+_bl = [_v.get('baseline_class') for _v in EV['layerB']['derived'].values()]
+_planned = sum(1 for c in _bl if c == 'PLANNED')
+_backdated = sum(1 for c in _bl if c == 'BACKDATED')
+BACKDATE_CHIP = ('<span class="tag warn">計畫日期早於 Sprint 的只有 %d 張，'
+                 '事後回填 %d 張</span>' % (_planned, _backdated))
+
+# 停在 DEV DONE 最久的一張 —— 從 evidence 的訊號取，不要寫死卡號。
+_stuck = []
+for _k, _v in EV['layerB']['derived'].items():
+    for _s in (_v.get('signals') or []):
+        if _s.get('type') == 'STUCK_IN_DELIVERY_COMPLETE':
+            _stuck.append((_s.get('working_days') or 0, _k))
+_stuck.sort(reverse=True)
+if _stuck:
+    STUCK_CHIP = ('<span class="tag bad">%d 張停在 DEV DONE，最久的 %s 已 %d 個工作天</span>'
+                  % (len(_stuck), _stuck[0][1][7:], _stuck[0][0]))
+else:
+    STUCK_CHIP = '<span class="tag ok">目前沒有卡停在 DEV DONE</span>'
+
 A('<div class="sec"><div class="sech"><span class="n">05</span>'
   '<h2>要讓這張看板說真話，需要做什麼</h2>'
   '<span class="hint">每一項都直接對應到上面某個「無法判定」</span></div>')
@@ -65,11 +99,11 @@ SETUP = [
  ("4", "<b>把 <code>Flagged</code> 放到卡片畫面上，並公告它就是求救管道</b>",
        "PM / Jira", "本週內",
        "04 區每一條「在等什麼」都只能靠讀留言猜。"
-       "<span class='tag bad'>目前：全期 0 張設過</span>"),
+       + NOT_FETCHED_CHIP),
  ("5", "<b>確認 <code>issuelinks</code> 的「is blocked by」可用並教一次</b>",
        "PM", "本週內",
        "看板畫不出「A 擋住 B」——不是不會畫，是<b>沒有邊可畫</b>。"
-       "<span class='tag bad'>目前：期內 0 條相依邊</span>"),
+       + DEP_CHIP),
  ("6", "<b>決定 Planning Freeze 要不要鎖</b><br>"
        "<span class='faint' style='font-size:11.5px'>Sprint 開始後改計畫日期：留痕即可，還是禁止？</span>",
        "PM", "Sprint 15 前",
@@ -99,9 +133,8 @@ HABITS = [
        "Planning 當天<br><b>不是開工當天</b>",
        "卡排不進時間軸，<b>而且永遠不會逾期</b>。Sprint 開始後才填＝事後回填，"
        "拿來算 Plan vs Actual 只會得到「一切正常」。",
-       '<span class="tag bad">%d／%d 張沒壓起迄日</span><br>'
-       '<span class="tag warn">Goal Work 只有 3／12 的計畫日期早於 Sprint</span>'
-       % (len(nod_all), len(M))),
+       '<span class="tag bad">%d／%d 張沒壓起迄日</span><br>' % (len(nod_all), len(M))
+       + BACKDATE_CHIP),
  ("3", "開工時把卡從 <code>To Do</code> 拉到 <code>In Progress</code>",
        "真的開始做的那一刻",
        "看板算不出你什麼時候開始，<b>「晚幾天開工」整條失效</b>。"
@@ -111,13 +144,12 @@ HABITS = [
        "並用 <code>issuelinks</code> 登記被誰擋住",
        "當下，不要等 Daily",
        "你在等的東西沒有人看得見。04 區只能靠讀留言推測，而推測會漏。",
-       '<span class="tag bad">全期 0 張</span>'),
+       NOT_FETCHED_CHIP),
  ("5", "<code>DEV DONE</code> 不是終點——驗完轉 <code>Done</code>；"
        "母卡收掉前先看子卡",
        "交付與驗收時",
        "DEV DONE 會被誤讀成完成。母卡標完成但子卡還在動，Goal 看起來達成、實際上有尾巴。",
-       '<span class="tag bad">402 停在 DEV DONE 15 個工作天</span><br>'
-       '<span class="tag warn">582 母卡已完成，子卡 728 仍進行中</span>'),
+       STUCK_CHIP),
 ]
 for n, what, when, cost, now in HABITS:
     A('<tr><td class="faint mono">%s</td><td><b>%s</b></td><td class="dim">%s</td>'
@@ -138,8 +170,11 @@ for w in PARTICIPANTS:
     ex = []
     if skip: ex.append('跳過 In Progress：%s' % '、'.join(k[7:] for k in skip))
     if stuck: ex.append('停在 DEV DONE：%s' % '、'.join(k[7:] for k in stuck))
-    if w == "Bill Wang": ex.append('774 底下 5 張子卡無人承接（811–815）')
-    if w == "Lodifa Chen": ex.append('582 母卡已關但子卡 728 未完')
+    _una = sorted(x['key'] for x in S if x['who'] is None
+                  and (BY.get(x.get('parent')) or {}).get('who') == w)
+    if _una:
+        ex.append('名下 %d 張子卡無人承接：%s'
+                  % (len(_una), '、'.join(k[7:] for k in _una)))
     ratio = len(nod) / len(cs) if cs else 0
     badge = ('<span class="tag bad">%d／%d</span>' % (len(nod), len(cs))) if ratio > .5 else \
             (('<span class="tag warn">%d／%d</span>' % (len(nod), len(cs))) if nod else '<span class="tag ok">0</span>')

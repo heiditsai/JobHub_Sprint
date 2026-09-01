@@ -136,14 +136,36 @@ A('<div class="sec"><div class="sech"><span class="n">02</span>'
 
 nodate_all = [m for m in M if not m['pstart'] and not m['pend']]
 A('<div class="banner" style="border-left-color:var(--amb);margin:0 0 12px">'
-  '<div class="t">⚑ 35 張卡裡有 <b>%d 張沒壓起迄日</b>（%.0f%%），它們永遠不會在 Jira 上逾期</div>'
+  '<div class="t">⚑ %d 張卡裡有 <b>%d 張沒壓起迄日</b>（%.0f%%），它們永遠不會在 Jira 上逾期</div>'
   '<div class="b">沒有 <code>Start date</code>／<code>duedate</code> 的卡排不進時間軸，也不會觸發任何逾期判定。'
   '分布：%s。<br>下表是<b>每個 participant 的完整清單</b>——Goal Work、Other Sprint Work 一張卡一行，不省略；'
   '子卡收在母卡底下可展開，<b>展開後與母卡走同一條時間軸</b>——子卡自己的計畫線與實際線'
   '直接畫在同樣的五天上，不再只是一張沒有時間的清單。</div></div>'
-  % (len(nodate_all), len(nodate_all) / len(M) * 100,
+  % (len(M), len(nodate_all), len(nodate_all) / len(M) * 100,
      ' · '.join('%s <b>%d</b>' % (w, c) for w, c in
                 sorted(collections.Counter(m['who'] for m in nodate_all).items(), key=lambda x: -x[1]))))
+
+_SRC_LABEL = {
+    'AI_DRAFTED_PENDING_PO_REVIEW': (
+        'bad', 'AI 草擬 · 未經覆核',
+        '本期的 Goal→卡號歸屬是<b>看板依 Goal 原文與卡片標題草擬的第一版，PO 尚未覆核</b>。'
+        '每一條的把握度不同，低把握度的請以 PO 回報為準——'
+        '<b>在覆核之前，任何 Goal 層級的判斷都不應被當成事實引用</b>。'),
+    'PO_DECLARED_VIA_JIRA_COMMENT': (
+        'ok', 'PO 宣告', 'Goal→卡號歸屬來自 JOBHUB-452 的 GOALMAP-V1 留言。'),
+    'PO_DECLARED_NOT_IN_JIRA': (
+        'warn', 'PO 口頭宣告', 'Goal→卡號歸屬由 PO 口頭宣告後記錄在程式碼裡，Jira 上沒有來源。'),
+    'NONE': (
+        'bad', '無歸屬來源',
+        '本期沒有 Goal→卡號歸屬，所有卡一律列入 Other Sprint Work，看板不推論歸屬。'),
+}
+_sc, _sl, _sd = _SRC_LABEL.get(GOAL_MAP_SOURCE, ('warn', GOAL_MAP_SOURCE, ''))
+A('<div class="banner" style="border-left-color:var(--%s);margin:0 0 12px">'
+  '<div class="t">Goal→卡號歸屬來源：<span class="tag %s">%s</span></div>'
+  '<div class="b">%s%s</div></div>'
+  % ('red' if _sc == 'bad' else ('amb' if _sc == 'warn' else 'grn'),
+     _sc, esc(_sl), _sd,
+     ('<br>' + esc(GOAL_MAP_NOTE)) if GOAL_MAP_NOTE else ''))
 
 A('<div class="card"><div class="scroll escroll"><div class="egrid">')
 # 欄位表頭
@@ -181,11 +203,27 @@ for person in PARTICIPANTS:
                done, len(g['work']), health))
         if g['dep']:
             goal_lines.append('<div class="gline dep">↳ 宣告相依：%s</div>' % esc(g['dep']))
+
+    if not gs:
+        # 有 Personal Sprint Goal 文字、但還沒有 Goal→卡號歸屬。
+        # 照實把 Goal 原文列出來並標明歸屬缺漏，**不要用語意推論補**。
+        for _st in PERSONAL_BY_FULLNAME.get(person, []):
+            goal_lines.append(
+                '<div class="gline"><span class="tag warn gidt">未對應</span>'
+                '<span class="gtx">%s</span>'
+                '<span class="gmeta">無卡號歸屬</span></div>' % esc(_st))
+        if goal_lines:
+            goal_lines.append(
+                '<div class="gline dep">↳ 本期尚未提供 Goal→卡號歸屬，'
+                '下方所有卡一律列入 OTHER SPRINT WORK</div>')
+
+    # 名單外的人不推角色（見團隊看板規則），沒有宣告就留空
+    _role = gs[0]['role'] if gs else ''
     A('<div class="erow"><div class="full pname" id="%s">'
       '<div class="ptop"><span class="pn">%s</span><span class="prole">%s</span>'
       '<span class="pstat">Goal Work %d · Other %d · 名下子卡 %d／%d · '
       '<b style="color:var(--amb)">%d 張沒壓起迄日</b></span></div>%s</div></div>'
-      % (anchor_of(person), esc(person), gs[0]['role'], len(gw), len(other),
+      % (anchor_of(person), esc(person), _role, len(gw), len(other),
          sum(1 for x in mysubs if x['st'] == 'done'), len(mysubs), nod,
          ''.join(goal_lines)))
 

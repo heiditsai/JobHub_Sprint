@@ -506,7 +506,10 @@ exec(open('lifecycle_section.py',encoding='utf-8').read())
 exec(open('execution.py',encoding='utf-8').read())
 
 # ── SECTION 4 · NEEDS ATTENTION ──
-RISKS=[
+# 下面這份 RISKS 是 Sprint 14（sprint id 8765）在 2026-08-27 手寫的 Layer C 判讀。
+# 它**只對那一期成立**，換一期照抄就是說謊，所以綁上 sprint id。
+AUTHORED_RISKS_SPRINT_ID = '8765'
+AUTHORED_RISKS=[
  dict(hi=True, who="Bill Wang", key="JOBHUB-771", type="OVERDUE · 計畫日期可比對",
    signal="計畫 08/19→08/21（08-18 Planning 當天填，可比對）・實際 08/19 開工・現況 In Progress",
    cause="12 張子卡只剩 <b>JOBHUB-787</b> 一張待辦，卡上零留言、無外部依賴",
@@ -538,6 +541,70 @@ RISKS=[
    impact="Lodifa 的 Goal 說「推上 Production 環境」，但底下的後端 API 還在動",
    act="Lodifa 確認 728／880 是否影響上 Production", you="不影響就請她明講，讓 Goal 可以收掉", heidi=False),
 ]
+
+# 本期沒有手寫判讀時，改由 evidence 的訊號生成——
+# SIGNAL 只放算得出來的事實，CAUSE／IMPACT／NEXT ACTION 一律標「未提供」，
+# **不得由 AI 補寫判讀**（見 05 區的資料契約）。
+_SIG_LABEL = {
+    'OVERDUE': ('已逾期', True),
+    'DUE_TODAY': ('今天到期', True),
+    'DUE_TOMORROW': ('明天到期', False),
+    'DUE_IN_2_WORKING_DAYS': ('剩 2 個工作天', False),
+    'DUE_DATE_PASSED': ('承諾日已過', True),
+    'STARTED_LATE': ('開工晚於計畫', True),
+    'STUCK_IN_DELIVERY_COMPLETE': ('停在 DEV DONE', False),
+    'OVERSIZED_PLANNED_DURATION': ('計畫工期過長', False),
+}
+_NOTE = '未提供——本期尚未有人做這一項判讀，看板不自行補寫'
+
+
+def _derive_risks():
+    out = {}
+    for k, v in EV['layerB']['derived'].items():
+        row = BY.get(k) or SBY.get(k)
+        if not row:
+            continue
+        for s in (v.get('signals') or []):
+            lab = _SIG_LABEL.get(s.get('type'))
+            if not lab:
+                continue
+            name, hard = lab
+            d = s.get('working_days')
+            txt = name + ('（%d 個工作天）' % d if d is not None else '')
+            e = out.setdefault(k, dict(
+                hi=False, who=row['who'] or '未指派', key=k, types=[], facts=[],
+                cause=_NOTE, impact=_NOTE, act=_NOTE, you=_NOTE, heidi=False))
+            e['types'].append(txt)
+            e['hi'] = e['hi'] or hard
+            e['heidi'] = e['heidi'] or (hard and (row.get('pri') in ('P0', 'P1')))
+    res = []
+    for k, e in out.items():
+        row = BY.get(k) or SBY.get(k)
+        e['type'] = ' · '.join(e['types'])
+        _d = EV['layerB']['derived'].get(k) or {}
+        _as = (_d.get('actual_start') or '')[:10] or '—'
+        _ae = (_d.get('actual_end') or '')[:10] or '—'
+        e['signal'] = ('計畫 %s→%s・實際 %s→%s・現況 %s'
+                       % (row['pstart'] or '未填', row['pend'] or '未填',
+                          _as, _ae, STL.get(row['st'], row['st'])))
+        e['you'] = ('這張是 %s，訊號是事實，但「為什麼」與「要不要介入」本期沒有人判讀過'
+                    % (row.get('pri') or '未設優先級'))
+        res.append(e)
+    order = {'P0': 0, 'P1': 1, 'P2': 2, 'P3': 3, 'P4': 4}
+    res.sort(key=lambda e: (not e['hi'],
+                            order.get((BY.get(e['key']) or SBY.get(e['key'])).get('pri'), 9),
+                            e['key']))
+    return res
+
+
+if str(_SP['id']) == AUTHORED_RISKS_SPRINT_ID:
+    RISKS = AUTHORED_RISKS
+    RISK_SOURCE = '人工判讀（Layer C）'
+else:
+    RISKS = _derive_risks()
+    RISK_SOURCE = ('由 evidence 訊號生成——本期<b>沒有</b>人工判讀，'
+                   'CAUSE／IMPACT／NEXT ACTION 一律顯示「未提供」')
+
 NEEDYOU=[r for r in RISKS if r['heidi']]
 A('<div class="sec"><div class="sech"><span class="n">04</span><h2>NEEDS ATTENTION</h2>'
   '<span class="hint">%d 項待處理，其中 <b style="color:var(--red)">%d 項需要你裁決</b></span></div>'
@@ -564,7 +631,7 @@ for r in RISKS:
     A('</dl></div>')
 A('<div class="faint" style="font-size:11.5px;margin-top:10px">'
   'SIGNAL 一律是 Jira 事實（欄位值或 changelog 時間戳）。CAUSE／IMPACT／NEXT ACTION 是判讀，'
-  '看板不替任何人重排工作優先序。</div>')
+  '看板不替任何人重排工作優先序。<br>本區來源：%s。</div>' % RISK_SOURCE)
 A('</div>')
 
 
@@ -625,14 +692,27 @@ A('<details><summary>▸ Non-participant Work（%d 張）— 不列入 Personal 
   %(len(np_all),''.join('<tr><td>%s</td><td>%s</td><td class="dim">%s · %s</td><td>%s</td></tr>'
      %(L(m['key']),esc(m['sum']),esc(m['who']),NONPART.get(m['who'],''),stat(m['key'])) for m in np_all)))
 
-A('<details><summary>▸ 今日 Sprint 範圍變動 — 3 張卡在 10:24 之後被移出 Sprint 14</summary><div class="pad">'
-  '<div class="scroll"><table><tr><th style="width:96px">KEY</th><th>TITLE</th><th style="width:104px">移出時狀態</th></tr>'
-  '<tr><td>%s</td><td>［調研］JobHub 職缺/履歷資料格式不同的存取方式</td><td>◕ Dev Done</td></tr>'
-  '<tr><td>%s</td><td>［釐清］［B3］匯入精靈職缺選單：草稿可選與否</td><td>◐ In Progress</td></tr>'
-  '<tr><td>%s</td><td>登出後按多次瀏覽器上一頁，出現誤導性錯誤畫面</td><td>○ To Do</td></tr>'
-  '</table></div><div class="faint" style="font-size:11.5px;margin-top:10px">'
-  '三張都是 Quincy 名下。移出後 Sprint 由 38 張變 35 張。</div></div></details>'
-  %(L("JOBHUB-363"),L("JOBHUB-420"),L("JOBHUB-714")))
+# 「今日 Sprint 範圍變動」原本是 Sprint 14 某一天的手寫觀察（3 張卡、38→35 張），
+# 每天重跑都會照抄同一段假話。範圍變動要算得出來才畫，算不出來就不要有這一區。
+
+def _issuelink_cells():
+    """issuelinks 的可信度要**算**出來，不能寫死。
+
+    只算「兩端都在本期」的邊——跨期的 link 不代表本期有相依可用。
+    """
+    edges = (EV.get('layerB', {}).get('dependencies') or {}).get('edges') or []
+    inn = [e for e in edges if e.get('both_in_sprint')]
+    blk = [e for e in inn if e.get('blocking')]
+    n = len(M) + len(S)
+    if not inn:
+        return ('bad', '幾乎不可用',
+                '本期 %d 張卡彼此之間<b>沒有任何一條登記的相依邊</b>'
+                '（另有 %d 條連到本期以外的卡，不納入判定）。' % (n, len(edges) - len(inn)))
+    return ('warn' if len(inn) < 5 else 'ok', '部分可用',
+            '本期 %d 張卡之間有 <b>%d 條</b>登記的相依邊，其中 <b>%d 條</b>是 blocking；'
+            '另有 %d 條連到本期以外的卡，不納入判定。'
+            % (n, len(inn), len(blk), len(edges) - len(inn)))
+
 
 A('<details><summary>▸ Data Diagnostics — 資料來源與可信度</summary><div class="pad"><div class="scroll"><table>'
   '<tr><th style="width:180px">項目</th><th style="width:80px">性質</th><th>說明</th></tr>'
@@ -662,9 +742,10 @@ A('<details><summary>▸ Data Diagnostics — 資料來源與可信度</summary>
   '<tr><td>Story point</td><td class="tag bad">不可用</td><td>全期 0 張填寫。</td></tr>'
   '<tr><td><code>Flagged</code></td><td class="tag bad">不可用</td>'
   '<td>全期 <b>0 張</b>設過，因此「誰在等誰」沒有任何結構化來源。</td></tr>'
-  '<tr><td><code>issuelinks</code></td><td class="tag bad">幾乎不可用</td>'
-  '<td>本期 35 張卡彼此之間<b>沒有任何一條登記的相依邊</b>。</td></tr>'
-  '</table></div></div></details></div>')
+  '<tr><td><code>issuelinks</code></td><td class="tag %s">%s</td>'
+  '<td>%s</td></tr>'
+  '</table></div></div></details></div>'
+  % _issuelink_cells())
 A('</div>')
 
 A('<div class="foot">'

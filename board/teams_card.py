@@ -11,6 +11,7 @@
   * 不比完成率、不排名、不判斷任何人的 performance
 """
 import json, os, sys
+from urllib.parse import quote as _urlquote
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'evidence'))
 from paths import evidence_path, lifecycle_path            # noqa: E402
@@ -46,8 +47,14 @@ ROLE_BUCKET = [
 MAX_PER_BUCKET = 6          # Teams 卡片有 28KB 上限，超出的用「另有 N 張」帶過
 
 # 團隊檔案庫裡當日 HTML 的固定位置（flow 寫檔，卡片先放連結）
-FILES_BASE = ('https://huanuage.sharepoint.com/sites/msteams_12c4ef/'
-              'Shared Documents/Daily看板/')
+#
+# ⚠ 這個路徑含**空白**（Shared Documents）與**中文**（Daily看板），
+# 直接拼進 Adaptive Card 的 url 會產生未編碼的 URL。Teams 的 Defender Safe Links
+# 解析不了未編碼的 URL，點下去會停在 atp-safelinks.html 這張中繼頁而不轉址——
+# 看起來像沒權限，其實是連結本身壞的。所以一律 percent-encode。
+_FILES_BASE_RAW = ('https://huanuage.sharepoint.com/sites/msteams_12c4ef/'
+                   'Shared Documents/Daily看板/')
+FILES_BASE = _urlquote(_FILES_BASE_RAW, safe=':/')
 
 # @ 提及用的公司帳號。**只有真的需要這個人今天處理時才 tag**（見 needs_action）。
 # 查不到帳號的人一律不 tag——寧可漏，也不要 tag 錯人。
@@ -224,7 +231,7 @@ def build(ev, lc, html_name=None):
             ]}
     if html_name:
         card['actions'].insert(0, {'type': 'Action.OpenUrl', 'title': '今天的完整看板',
-                                   'url': FILES_BASE + html_name})
+                                   'url': FILES_BASE + _urlquote(html_name)})
     if entities:
         # 提及實體必須放在 msteams（小寫）；msTeams 那個是版面寬度，兩者不同鍵
         card['msteams'] = {'entities': entities}
